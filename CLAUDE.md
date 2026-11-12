@@ -38,7 +38,8 @@ Todo gratis: nada de APIs de pago.
 - Adam revisa cada Short antes de subirlo.
 
 ## Estado actual
-- `render.py`: motor de muestra (vídeo GPS horizontal de 42 s sin voz) → base para las plantillas verticales.
-- `topics.csv`: lista de temas.
-- Pendiente: todo el pipeline. Empieza instalando dependencias, luego voz, luego plantillas verticales, y genera un primer Short completo de prueba.
-- Si se piden vídeos largos más adelante, reutiliza el mismo motor a 1920x1080.
+- Pipeline completo funcionando: `make_short.py` (orquestador), `engine.py` (motor vertical 1080x1920 + 11 plantillas: hook, big_number, versus, globe, signal, diagram/flow, rings, list, didyouknow, chart, reveal), `audio.py` (música procedural sin copyright o pistas de `assets/music/`, SFX en `assets/sfx/`, ducking, loudnorm −14 LUFS).
+- Guiones en `scripts/<slug>.json` (los escribe Claude con datos verificados). `--review` genera solo voz + tiempos + hojas de fotogramas en `build/<slug>/review/` (zonas prohibidas en rojo).
+- Instalación desde cero: `./setup.sh` (modelos en `models/`, fuera de git). PyAV fijado a <16 por incompatibilidad con faster-whisper.
+- `render.py`: muestra horizontal original (base para vídeos largos a 1920x1080).
+- Hecho: GPS (2026-11-12).
