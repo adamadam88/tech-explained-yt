@@ -1,0 +1,157 @@
+QUIET CIRCUIT — 7 Shorts listos para subir (usa short_youtube_1440p.mp4)
+
+======================================================================
+1. why-do-phone-batteries-get-worse-over-time
+======================================================================
+
+TÍTULO:
+The Real Reason Your Battery Gets Worse 🔋 #shorts
+
+DESCRIPCIÓN:
+Your battery isn't just 'old': lithium gets trapped in a growing SEI layer on the graphite and never comes back.
+Heat and sitting at 100% speed it up. Apple rates ~80% capacity after 500 cycles (1,000 on iPhone 15).
+
+Sources:
+- Apple – Maximizing Battery Life and Lifespan (above 35 °C can permanently damage capacity): https://www.apple.com/batteries/maximizing-performance/
+- AppleInsider – iPhone 15 battery rated for 1,000 cycles; iPhone 14 and earlier, 500: https://appleinsider.com/articles/24/02/20/apple-says-the-iphone-15-battery-is-more-durable-than-it-originally-thought
+- Battery Design – SEI growth (irreversible lithium loss, faster at high temperature and high state of charge): https://www.batterydesign.net/chemistry/solid-electrolyte-interphase/sei-growth/
+- Ionworks – Batteries 101: degradation (loss of lithium inventory, heat, high SOC): https://docs.ionworks.com/guide/batteries-101/degradation
+
+#battery #batteryhealth #lithiumion #shorts
+
+ETIQUETAS:
+battery, battery health, lithium-ion, iPhone battery, battery degradation, how batteries work, quiet circuit, science, tech, shorts
+
+======================================================================
+2. how-does-wi-fi-go-through-walls
+======================================================================
+
+TÍTULO:
+Why Wi-Fi Goes Through Walls (But Not Metal) 📶 #shorts
+
+DESCRIPCIÓN:
+Wi-Fi is light you can't see, with waves about 12 cm long — drywall and wood barely slow it down.
+Concrete soaks it up, metal reflects it, and water (including you) absorbs it.
+
+Sources:
+- NASA Imagine the Universe – The electromagnetic spectrum (radio, microwaves and light are the same radiation): https://imagine.gsfc.nasa.gov/science/toolbox/emspectrum1.html
+- NASA Earthdata – Electromagnetic spectrum (visible light ≈ 380–700 nm): https://earthdata.nasa.gov/learn/earth-observation-data-basics/electromagnetic-spectrum
+- Interline – Building materials and Wi-Fi signal loss at 2.4 GHz and 5 GHz (drywall 3–6 dB, brick 8–10 dB, concrete up to ~25 dB): https://interline.pl/Information-and-Tips/Building-Materials-and-Wi-Fi-Signal-Loss-2.4-GHz-and-5-GHz
+- eero – How to boost Wi-Fi signals through walls (metal reflects, water absorbs): https://eero.com/blog/articles/how-to-boost-wifi-signals-through-walls
+- USGS – The water in you (the human body is up to ~60% water): https://www.usgs.gov/special-topics/water-science-school/science/water-you-water-and-human-body
+- Sciencing – What's the mesh inside your microwave door (metal enclosure and mesh reflect the microwaves back inside): https://www.sciencing.com/1834813/whats-mesh-inside-microwave-door-function-explained
+
+#wifi #howwifiworks #router #shorts
+
+ETIQUETAS:
+wifi, wi-fi, how wifi works, router, wifi signal, physics, quiet circuit, science, tech, shorts
+
+======================================================================
+3. what-happens-in-the-1-second-after-you-send-a-whatsapp-messa
+======================================================================
+
+TÍTULO:
+What Happens the Second You Hit Send on WhatsApp 💬 #shorts
+
+DESCRIPCIÓN:
+Before your message leaves your phone, it's locked with end-to-end encryption that only your friend's phone can open.
+It hops through cell towers, fiber and WhatsApp's servers — which only ever see scrambled noise.
+
+Sources:
+- WhatsApp – Encryption Overview, technical white paper (Signal Protocol; WhatsApp has no plaintext access): https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf
+- TechCrunch – WhatsApp is now delivering roughly 100 billion messages a day; over 2 billion users (Oct 2020): https://techcrunch.com/2020/10/29/whatsapp-is-now-delivering-roughly-100-billion-messages-a-day/
+- Panda Security – WhatsApp check marks explained (one grey, two grey, two blue): https://www.pandasecurity.com/en/mediacenter/whatsapp-check-marks/
+
+#whatsapp #encryption #endtoendencryption #shorts
+
+ETIQUETAS:
+whatsapp, encryption, end-to-end encryption, how whatsapp works, privacy, messaging, quiet circuit, tech, science, shorts
+
+======================================================================
+4. why-is-the-whole-world-dependent-on-chips-from-taiwan
+======================================================================
+
+TÍTULO:
+Why Almost Every Advanced Chip Comes From One Island #shorts
+
+DESCRIPCIÓN:
+One company in Taiwan, TSMC, makes about 70% of the world's contract-made chips — for Apple, Nvidia and AMD.
+A 2021 study put 92% of the most advanced (sub-10 nm) chipmaking capacity in Taiwan.
+
+Sources:
+- Focus Taiwan / TrendForce – TSMC held 69.9% of the global foundry market in 2025: https://focustaiwan.tw/business/202603130009
+- SIA & BCG – Strengthening the Global Semiconductor Supply Chain (2021): 92% of capacity below 10 nm in Taiwan, 8% in South Korea: https://www.semiconductors.org/wp-content/uploads/2021/05/BCG-x-SIA-Strengthening-the-Global-Semiconductor-Value-Chain-April-2021_1.pdf
+- Tom's Hardware – Apple A17 Pro: 3 nm, 19 billion transistors: https://tomshardware.com/news/apple-a17-pro-3nm-iphone-15-pro
+- HWBusters – ASML is the only maker of EUV lithography machines; TSMC builds chips for Nvidia, Apple and AMD: https://hwbusters.com/news/the-quiet-monopoly-powering-every-advanced-chip-in-the-world/
+
+#tsmc #taiwan #semiconductors #shorts
+
+ETIQUETAS:
+TSMC, Taiwan, semiconductors, chips, how chips are made, ASML, quiet circuit, tech, science, shorts
+
+======================================================================
+5. how-does-the-internet-cross-the-ocean
+======================================================================
+
+TÍTULO:
+The Internet Is Mostly at the Bottom of the Ocean 🌊 #shorts
+
+DESCRIPCIÓN:
+Over 99% of data between continents travels through about 600 cables lying on the seafloor.
+Inside: hair-thin glass fibers carrying light, steel for strength and copper powering repeaters every 50–100 km.
+
+Sources:
+- TeleGeography – congressional testimony: submarine cables carry over 99% of intercontinental data: https://resources.telegeography.com/hubfs/Tim%20Stronge%20Written%20Congressional%20Testimony%20%7C%20TeleGeography.pdf
+- TeleGeography – How many submarine cables are there, anyway? (~600 systems, ~1.48 million km in 2025): https://blog.telegeography.com/how-many-submarine-cables-are-there-anyway
+- ICPC – Damage to submarine cables: 150–200 faults a year, ~70–80% from accidental human activity such as fishing and anchors: https://iscpc.org/publications/icpc-viewpoints/damage-to-submarine-cables-from-dragged-anchors/
+- Fibre Systems – ICPC: sharks don't dine on subsea fibre-optic cables: https://www.fibre-systems.com/news/sharks-dont-dine-subsea-fibre-optic-cables-says-icpc
+- US patent 4278835 – submarine cable: optical fibres in a conductive tube, steel wires, conductor powering the repeaters: https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/4278835
+- Hengtong – submarine fiber optic cable: repeaters every 50–100 km: https://www.hengtongglobal.com/info/submarine-fiber-optic-cable-103155332.html
+
+#submarinecables #underseacables #howtheinternetworks #shorts
+
+ETIQUETAS:
+submarine cables, undersea cables, how the internet works, internet, fiber optics, ocean, quiet circuit, tech, science, shorts
+
+======================================================================
+6. how-does-face-id-work-in-the-dark
+======================================================================
+
+TÍTULO:
+How Face ID Sees You With the Lights Off 🔦 #shorts
+
+DESCRIPCIÓN:
+Face ID brings its own invisible light: an infrared flood illuminator and over 30,000 projected dots.
+Dots on your nose land closer than on your cheeks — the warped pattern becomes a 3D map of your face.
+
+Sources:
+- Wikipedia – Face ID (TrueDepth camera: dot projector with more than 30,000 infrared dots, flood illuminator, infrared camera): https://en.wikipedia.org/wiki/Face_ID
+- Gizmodo – How Apple's new Face ID works (1 in 1,000,000 chance of a random match): https://gizmodo.com/how-apples-new-face-id-works-1803813400
+- HuffPost UK – iPhone X Face ID: the infrared flood illuminator lets it work in the dark: https://huffingtonpost.co.uk/amp/entry/apples-iphone-x-face-id-heres-why-its-better-and-worse-than-a-fingerprint-sensor_uk_59b90196e4b02da0e13d8ff2
+
+#faceid #iphone #infrared #shorts
+
+ETIQUETAS:
+Face ID, iPhone, infrared, how Face ID works, 3D scanning, security, quiet circuit, tech, science, shorts
+
+======================================================================
+7. why-does-your-phone-get-hot
+======================================================================
+
+TÍTULO:
+Your Phone Is Secretly a Tiny Heater 🔥 #shorts
+
+DESCRIPCIÓN:
+Almost all the power your phone's chip uses ends up as heat — and phones have no fan to blow it away.
+Graphite sheets and vapor chambers spread it into the case; if that's not enough, the phone slows itself down.
+
+Sources:
+- Android Central – Tech Talk: why does my phone get hot?: https://www.androidcentral.com/phones/tech-talk-why-does-my-phone-get-hot
+- BGR – Why smartphones don't have built-in fans (passive cooling, graphite sheets, vapor chambers): https://www.bgr.com/2193362/smartphones-cooling-explained-no-fans/
+- CG Director – CPU TDP explained (power a processor consumes is exhausted as heat): https://www.cgdirector.com/cpu-tdp-thermal-design-power-explained
+- SamMobile – Why is my phone getting hot? (thermal throttling): https://www.sammobile.com/news/why-is-my-phone-getting-hot-and-should-i-worry/
+
+#phoneoverheating #whyismyphonehot #thermalthrottling #shorts
+
+ETIQUETAS:
+phone overheating, why is my phone hot, thermal throttling, smartphone, heat, chips, quiet circuit, tech, science, shorts

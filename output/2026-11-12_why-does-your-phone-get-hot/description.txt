@@ -1,0 +1,10 @@
+Almost all the power your phone's chip uses ends up as heat — and phones have no fan to blow it away.
+Graphite sheets and vapor chambers spread it into the case; if that's not enough, the phone slows itself down.
+
+Sources:
+- Android Central – Tech Talk: why does my phone get hot?: https://www.androidcentral.com/phones/tech-talk-why-does-my-phone-get-hot
+- BGR – Why smartphones don't have built-in fans (passive cooling, graphite sheets, vapor chambers): https://www.bgr.com/2193362/smartphones-cooling-explained-no-fans/
+- CG Director – CPU TDP explained (power a processor consumes is exhausted as heat): https://www.cgdirector.com/cpu-tdp-thermal-design-power-explained
+- SamMobile – Why is my phone getting hot? (thermal throttling): https://www.sammobile.com/news/why-is-my-phone-getting-hot-and-should-i-worry/
+
+#phoneoverheating #whyismyphonehot #thermalthrottling #shorts

@@ -344,8 +344,8 @@ def t_globe(arr, t, d, ctx):
     t0 = ctx.at(d.get("at"), .05); dur = d.get("dur", 1.6); n = d.get("count", 24)
     shown = int(round(n * expo((t - t0) / dur) if t > t0 else 0))
     a, b, dy = enter(t, t0 - .1, .8, 20, 12)
-    s = f"{shown}{d.get('suffix', '') if shown == n else ''}"
-    text_tnum(arr, s, CX, 490 + dy, "SemiBold", 140, INK, a, "m")
+    s = f"{d.get('prefix', '')}{shown:,}{d.get('suffix', '') if shown == n else ''}"
+    if d.get("counter", True): text_tnum(arr, s, CX, 490 + dy, "SemiBold", 140, INK, a, "m")
     ts = ctx.at(d.get("sub_at"), 99.0); k = smooth((t - ts) / .3)
     if d.get("label"): label(arr, d["label"], CX, 385 + dy, G4, a * (1 - k), 28, blur=b + 10 * k)
     if d.get("sub"):
@@ -434,7 +434,8 @@ def t_list(arr, t, d, ctx):
         ti = ctx.at(ats[i] if i < len(ats) else None, .15 + i * .3); ia, ib, idy = enter(t, ti, .8, 30, 12)
         if ia <= 0: continue
         y = top + 190 + i * 190 + idy; glass(arr, (90, y - 76, 910, y + 76), 40, ia)
-        text(arr, it["n"], 160, y, "SemiBold", 66, ctx.accent, ia, "m", "c", -.03, ib)
+        if it.get("icon"): icon(arr, it["icon"], 160, y, 64, ctx.accent if it.get("key", True) else G4, ia, ib)
+        else: text(arr, it["n"], 160, y, "SemiBold", 66, ctx.accent, ia, "m", "c", -.03, ib)
         text(arr, it["text"], 240, y, "Medium", fit(it["text"], "Medium", 50, 620, -.015), INK, ia, "l", "c", -.015, ib)
     if d.get("icon"):
         a2, b2, dy2 = enter(t, ctx.at(d.get("icon_at"), .5), .8, 20, 12)
@@ -543,9 +544,122 @@ def t_wall(arr, t, d, ctx):
     icon(arr, "smartphone", rcv[0], rcv[1] + 20, 96, G4, a)
     icon(arr, "wifi", rcv[0], rcv[1] - 90, 64, ctx.accent if T > .5 else G3, a * (.25 + .75 * T))
 
+def t_section(arr, t, d, ctx):
+    """Cross-section of a subsea cable (glass fibres with light pulses / steel wires / copper tube / polyethylene)
+    with a legend underneath; the layer being talked about is in the accent."""
+    c = (CX, 700); hl = d.get("highlight", "fibers"); k = .8
+    layers = [("fibers", 0.0, "Glass fibres"), ("steel", .25, "Steel wires · strength"), ("copper", .5, "Copper · power"), ("sheath", .75, "Polyethylene · insulation")]
+    st = {key: enter(t, ctx.at(d.get(key + "_at"), dt), .8, 0, 0)[0] for key, dt, _ in layers}
+    def col(key, base): return ctx.accent if key == hl else base
+    bgc = (14, 14, 14)
+    if st["sheath"] > 0:
+        m, p = disc(int(330 * k)); comp(arr, m, c[0] - p, c[1] - p, (38, 38, 37), st["sheath"])
+        m, p = disc(int(318 * k)); comp(arr, m, c[0] - p, c[1] - p, bgc, st["sheath"])
+        cv2.circle(arr, c, int(330 * k), mixc(bgc, col("sheath", G3), st["sheath"]), 2, cv2.LINE_AA)
+    if st["copper"] > 0:
+        cv2.circle(arr, c, int(262 * k), mixc(bgc, col("copper", (150, 118, 92)), st["copper"]), 14, cv2.LINE_AA)
+    if st["steel"] > 0:
+        n = 22; rot = t * .15
+        for i in range(n):
+            ang = rot + i * 2 * math.pi / n; p = (c[0] + 205 * k * math.cos(ang), c[1] + 205 * k * math.sin(ang))
+            m, pp = disc(20); comp(arr, m, p[0] - pp, p[1] - pp, col("steel", (120, 120, 116)), st["steel"])
+            m, pp = disc(6); comp(arr, m, p[0] - pp - 6, p[1] - pp - 6, (210, 210, 206), st["steel"] * .35)
+    if st["fibers"] > 0:
+        cv2.circle(arr, c, int(130 * k), mixc(bgc, G3, st["fibers"]), 2, cv2.LINE_AA)
+        for i in range(8):
+            ang = i * 2 * math.pi / 8 + .3; r = (62 if i % 2 else 92) * k; p = (c[0] + r * math.cos(ang), c[1] + r * math.sin(ang))
+            pulse = .55 + .45 * math.sin(t * 9 + i * 1.7)
+            dot(arr, p[0], p[1], 8, col("fibers", INK), st["fibers"] * pulse, glow=.9 * pulse)
+    for j, (key, _, txt) in enumerate(layers):                                   # legend
+        la = st[key]
+        if la <= 0: continue
+        y = 1030 + j * 54; on = key == hl
+        dot(arr, 250, y, 7, ctx.accent if on else G3, la)
+        text(arr, txt, 280, y, "Medium", 34, INK if on else G4, la * (1 if on else .8), "l", "c", -.01)
+
+def _face_h(x, y):
+    """Relief of a stylised face on a unit ellipse (x, y in -1..1), 0..1: soft dome + strong features
+    (nose ridge, deep eye sockets, brows, cheekbones, lips) so the dot cloud reads as a face."""
+    g = lambda cx, cy, sx, sy: np.exp(-(((x - cx) / sx) ** 2 + ((y - cy) / sy) ** 2))
+    dome = np.sqrt(np.clip(1 - x ** 2 - y ** 2, 0, 1))
+    feat = (.75 * g(0, .02, .1, .34) + .35 * g(0, .3, .16, .07) - .7 * g(-.37, -.17, .17, .1) - .7 * g(.37, -.17, .17, .1)
+            + .35 * g(-.37, -.33, .25, .05) + .35 * g(.37, -.33, .25, .05) + .25 * g(-.45, .15, .18, .14) + .25 * g(.45, .15, .18, .14)
+            + .4 * g(0, .52, .22, .06) - .25 * g(0, .6, .2, .04))
+    return np.clip(.25 * dome + .5 + .6 * feat, 0, 1)
+
+@lru_cache(4)
+def _face_grid(step=20):
+    xs, ys = np.meshgrid(np.arange(-1, 1.0001, step / 230), np.arange(-1, 1.0001, step / 300))
+    keep = xs ** 2 + ys ** 2 <= 1; x, y = xs[keep], ys[keep]
+    return x, y, _face_h(x, y)
+
+def t_facedots(arr, t, d, ctx):
+    """Face ID: 'flood' (IR wash), 'dots' (projected grid), 'depth' (dots shift with depth -> 3D map)."""
+    mode = d.get("mode", "dots"); c = (CX, 760); RX, RY = 230, 300
+    x, y, h = _face_grid()
+    if mode == "flood":
+        k = smooth(t / .8)
+        m, p = disc(300, 90); comp(arr, m, c[0] - p, c[1] - p, ctx.accent, .10 * k)
+        sy = c[1] - RY + (t * 420) % (2 * RY)                                   # scan line
+        for i in range(len(x)):
+            px, py = c[0] + x[i] * RX, c[1] + y[i] * RY
+            v = .25 + .75 * h[i]; near = max(0, 1 - abs(py - sy) / 60)
+            dot(arr, px, py, 2.2 + 1.2 * near, ctx.accent, k * (.18 + .3 * v + .5 * near))
+        icon(arr, "sun-dim", c[0], c[1] - RY - 90, 72, G4, enter(t, .2, .7)[0])
+    else:
+        r0 = ctx.at(d.get("at"), .05); grow = expo((t - r0) / 1.4) * 1.5
+        warp = expo((t - ctx.at(d.get("warp_at"), .3)) / 1.6) if mode == "depth" else 0.0
+        for i in range(len(x)):
+            rr = math.hypot(x[i], y[i])
+            if rr > grow: continue
+            a = smooth((grow - rr) / .25)
+            px = c[0] + x[i] * RX + warp * 80 * (h[i] - .4); py = c[1] + y[i] * RY
+            col = mixc(G3, ctx.accent, .25 + .75 * h[i])
+            dot(arr, px, py, 2.0 + 1.6 * h[i] + 1.2 * h[i] * warp, col, a * (.3 + .7 * h[i]))
+        la, lb, ldy = enter(t, r0 + .3, .8, 12, 8)
+        if mode == "dots": label(arr, "30,000+ infrared dots", CX, 400 + ldy, G4, la, 26, blur=lb)
+        else: label(arr, "Closer dots shift more", CX, 400 + ldy, G4, la, 26, blur=lb)
+
+def t_heat(arr, t, d, ctx):
+    """Phone thermal view: 'chip' hot spot, 'sources' (chip / battery / screen), 'throttle' (temperature up, speed down)."""
+    mode = d.get("mode", "chip"); a, _, dy = enter(t, 0, .7, 30, 0)
+    if mode == "throttle":
+        tt = ctx.at(d.get("at"), .1); k = expo((t - tt) / 2.2)
+        for i, (lab, v0, v1, colr) in enumerate((("Temperature", .35, .92, ctx.accent), ("Speed", .95, .55, INK))):
+            y = 640 + i * 230 + dy; v = v0 + (v1 - v0) * k
+            label(arr, lab, 130, y - 60, G4, a, 24, "l")
+            comp(arr, rr_mask(740, 18, 9), 130, y, (40, 40, 38), a)
+            w = max(18, int(740 * v)); comp(arr, rr_mask(w, 18, 9), 130, y, colr, a)
+            text(arr, ("↑" if i == 0 else "↓"), 900, y - 54, "Medium", 44, colr, a * smooth((t - tt) / .6), "r")
+        return
+    pw, ph = 420, 840; x0, y0 = CX - pw // 2, 360 + dy
+    glass(arr, (x0, y0, x0 + pw, y0 + ph), 70, a, tint=.04)
+    spots = [("chip", (CX + 40, y0 + 230), 1.0, "Chip"), ("battery", (CX, y0 + 560), .7, "Battery"), ("screen", (CX, y0 + 420), .35, "Screen")]
+    show = ["chip"] if mode == "chip" else ["chip", "battery", "screen"]
+    ats = d.get("at", [None] * 3)
+    for i, (k, p, power, txt) in enumerate(spots):
+        if k not in show: continue
+        ts = ctx.at(ats[i] if i < len(ats) else None, .05 + .4 * i)
+        e = expo((t - ts) / 1.0)
+        if e <= 0: continue
+        pulse = .85 + .15 * math.sin(t * 3 + i)
+        if k == "screen":
+            comp(arr, rr_mask(pw - 40, ph - 40, 52), x0 + 20, y0 + 20, ctx.accent, .07 * e * pulse * a)
+        else:
+            r = int(150 * power); m, pp = disc(r, r * .55); comp(arr, m, p[0] - pp, p[1] - pp, ctx.accent, .55 * e * pulse * a)
+            dot(arr, p[0], p[1], 9, INK if k == "chip" else ctx.accent, e * a)
+            for j in range(2):                                   # isotherm rings drifting outwards
+                q = ((t * .5 + j * .5) % 1.0); rr = int(r * (.6 + 1.2 * q))
+                cv2.circle(arr, (int(p[0]), int(p[1])), rr, mixc((20, 20, 20), ctx.accent, .5 * (1 - q) * e * a), 2, cv2.LINE_AA)
+        if mode == "sources" or k == "chip":
+            la = smooth((t - ts - .2) / .4) * a
+            side = 1 if k != "battery" else -1
+            lx = x0 + pw + 30 if side > 0 else x0 - 30
+            label(arr, txt, lx, p[1], ctx.accent if k == "chip" else G4, la, 24, "l" if side > 0 else "r")
+
 TEMPLATES = {"hook": t_hook, "number": t_number, "big_number": t_number, "versus": t_versus, "globe": t_globe,
              "signal": t_signal, "flow": t_flow, "diagram": t_flow, "rings": t_rings, "list": t_list,
-             "insight": t_insight, "didyouknow": t_insight, "chart": t_chart, "reveal": t_reveal, "cell": t_cell, "wall": t_wall}
+             "insight": t_insight, "didyouknow": t_insight, "chart": t_chart, "reveal": t_reveal, "cell": t_cell, "wall": t_wall, "section": t_section, "facedots": t_facedots, "heat": t_heat}
 NO_CAPTIONS = {"hook", "reveal"}            # these already show the spoken words as the headline
 
 def _ats(d, key, n): a = d.get(key) or []; return [a[i] if i < len(a) else None for i in range(n)]
@@ -564,6 +678,9 @@ EVENTS = {
     "reveal": lambda d, c: [(0.0, "chime")],
     "cell": lambda d, c: [(.05, "tick")] + ([(c.at(d.get("crust_at"), .08) + .5, "tick")] if d.get("mode") == "trap" else []),
     "wall": lambda d, c: [(.05, "tick")],
+    "section": lambda d, c: [(c.at(d.get(k + "_at"), dt), "tick") for k, dt in (("fibers", 0.0), ("steel", .25), ("copper", .5), ("sheath", .75))][:4],
+    "facedots": lambda d, c: [(c.at(d.get("at"), .05), "tick")] + ([(c.at(d.get("warp_at"), .3), "chime")] if d.get("mode") == "depth" else []),
+    "heat": lambda d, c: [(c.at(x, .05 + .4 * i), "tick") for i, x in enumerate(_ats(d, "at", 1 if d.get("mode", "chip") == "chip" else 3))],
 }
 for a, b in (("big_number", "number"), ("diagram", "flow"), ("didyouknow", "insight")): EVENTS[a] = EVENTS[b]
 

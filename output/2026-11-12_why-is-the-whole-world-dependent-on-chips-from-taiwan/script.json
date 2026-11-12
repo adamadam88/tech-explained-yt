@@ -1,0 +1,177 @@
+{
+  "topic": "Why is the whole world dependent on chips from Taiwan?",
+  "category": "hardware",
+  "title": "Why Almost Every Advanced Chip Comes From One Island",
+  "description": [
+    "One company in Taiwan, TSMC, makes about 70% of the world's contract-made chips — for Apple, Nvidia and AMD.",
+    "A 2021 study put 92% of the most advanced (sub-10 nm) chipmaking capacity in Taiwan."
+  ],
+  "sources": [
+    "Focus Taiwan / TrendForce – TSMC held 69.9% of the global foundry market in 2025: https://focustaiwan.tw/business/202603130009",
+    "SIA & BCG – Strengthening the Global Semiconductor Supply Chain (2021): 92% of capacity below 10 nm in Taiwan, 8% in South Korea: https://www.semiconductors.org/wp-content/uploads/2021/05/BCG-x-SIA-Strengthening-the-Global-Semiconductor-Value-Chain-April-2021_1.pdf",
+    "Tom's Hardware – Apple A17 Pro: 3 nm, 19 billion transistors: https://tomshardware.com/news/apple-a17-pro-3nm-iphone-15-pro",
+    "HWBusters – ASML is the only maker of EUV lithography machines; TSMC builds chips for Nvidia, Apple and AMD: https://hwbusters.com/news/the-quiet-monopoly-powering-every-advanced-chip-in-the-world/"
+  ],
+  "tags": [
+    "TSMC",
+    "Taiwan",
+    "semiconductors",
+    "chips",
+    "how chips are made",
+    "ASML",
+    "quiet circuit",
+    "tech",
+    "science",
+    "shorts"
+  ],
+  "voice": "bf_emma",
+  "speed": 1.0,
+  "cover": {
+    "small": "The chip in your phone",
+    "big": "Made on|*one island*"
+  },
+  "beats": [
+    {
+      "narration": "The chip in your phone was probably made on one small *island*.",
+      "visual_type": "hook",
+      "data": {
+        "shots": [
+          {
+            "small": "The chip in your phone",
+            "big": "was made"
+          },
+          {
+            "at": "one",
+            "big": "on *one island*."
+          }
+        ],
+        "objects": [
+          {
+            "type": "chip",
+            "cx": 500,
+            "cy": 1080,
+            "w": 680,
+            "h": 580,
+            "dist": 4.2
+          }
+        ]
+      }
+    },
+    {
+      "narration": "Taiwan. Home to TSMC, which builds chips for Apple, Nvidia and AMD.",
+      "visual_type": "globe",
+      "data": {
+        "counter": false,
+        "label": "TSMC · Taiwan",
+        "sub": "Apple · Nvidia · AMD",
+        "sub_at": "builds",
+        "at": 0.0,
+        "objects": [
+          {
+            "type": "globe",
+            "cx": 500,
+            "cy": 920,
+            "w": 860,
+            "h": 860,
+            "sats": 0,
+            "markers": [
+              {
+                "lat": 23.7,
+                "lon": 121.0
+              }
+            ],
+            "face_lon": 121.0,
+            "speed": 0.05,
+            "at": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "narration": "TSMC alone makes about *70%* of the chips that companies order from factories.",
+      "visual_type": "number",
+      "data": {
+        "value": 70,
+        "unit": "%",
+        "label": "Of contract chipmaking (2025)",
+        "icon": "factory",
+        "at": 0.03,
+        "dur": 1.2
+      }
+    },
+    {
+      "narration": "And for the most advanced chips, a 2021 study put Taiwan's share at *92%*.",
+      "visual_type": "versus",
+      "data": {
+        "a": {
+          "label": "South Korea · under 10 nm",
+          "value": "8%",
+          "icon": "cpu"
+        },
+        "b": {
+          "label": "Taiwan · under 10 nm",
+          "value": "92%",
+          "icon": "cpu"
+        },
+        "a_at": 0.0,
+        "b_at": "Taiwan"
+      }
+    },
+    {
+      "narration": "A phone chip like Apple's A17 Pro packs *19 billion* transistors.",
+      "visual_type": "number",
+      "data": {
+        "value": 19,
+        "unit": "billion",
+        "label": "Transistors · Apple A17 Pro",
+        "icon": "cpu",
+        "at": 0.03,
+        "dur": 1.1
+      }
+    },
+    {
+      "narration": "And their factories rely on machines that only one Dutch company in the world can build: ASML.",
+      "visual_type": "flow",
+      "data": {
+        "nodes": [
+          {
+            "text": "ASML · Netherlands",
+            "icon": "scan-eye"
+          },
+          {
+            "text": "TSMC · Taiwan",
+            "icon": "factory"
+          },
+          {
+            "text": "Your phone",
+            "icon": "smartphone"
+          }
+        ],
+        "at": [
+          0.03,
+          "Dutch",
+          "ASML"
+        ]
+      }
+    },
+    {
+      "narration": "So one small island quietly builds the brains inside the devices you use every single day.",
+      "visual_type": "insight",
+      "data": {
+        "kicker": "Quiet power",
+        "icon": "cpu",
+        "text": "One *island*",
+        "small": "Billions of devices",
+        "small_at": "devices"
+      }
+    },
+    {
+      "narration": "And the one in your *pocket*?",
+      "visual_type": "reveal",
+      "data": {
+        "text": "The one in your *pocket*?",
+        "size": 160
+      }
+    }
+  ]
+}

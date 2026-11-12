@@ -1,0 +1,149 @@
+{
+  "topic": "How does Face ID work in the dark?",
+  "category": "mobile",
+  "title": "How Face ID Sees You With the Lights Off 🔦",
+  "description": [
+    "Face ID brings its own invisible light: an infrared flood illuminator and over 30,000 projected dots.",
+    "Dots on your nose land closer than on your cheeks — the warped pattern becomes a 3D map of your face."
+  ],
+  "sources": [
+    "Wikipedia – Face ID (TrueDepth camera: dot projector with more than 30,000 infrared dots, flood illuminator, infrared camera): https://en.wikipedia.org/wiki/Face_ID",
+    "Gizmodo – How Apple's new Face ID works (1 in 1,000,000 chance of a random match): https://gizmodo.com/how-apples-new-face-id-works-1803813400",
+    "HuffPost UK – iPhone X Face ID: the infrared flood illuminator lets it work in the dark: https://huffingtonpost.co.uk/amp/entry/apples-iphone-x-face-id-heres-why-its-better-and-worse-than-a-fingerprint-sensor_uk_59b90196e4b02da0e13d8ff2"
+  ],
+  "tags": [
+    "Face ID",
+    "iPhone",
+    "infrared",
+    "how Face ID works",
+    "3D scanning",
+    "security",
+    "quiet circuit",
+    "tech",
+    "science",
+    "shorts"
+  ],
+  "voice": "af_heart",
+  "speed": 1.0,
+  "cover": {
+    "small": "How Face ID works",
+    "big": "It sees you|*in the dark*"
+  },
+  "beats": [
+    {
+      "narration": "Face ID can see you in *total darkness*.",
+      "visual_type": "hook",
+      "data": {
+        "shots": [
+          {
+            "small": "In total darkness",
+            "big": "Face ID *sees you*"
+          }
+        ],
+        "objects": [
+          {
+            "type": "phone",
+            "cx": 500,
+            "cy": 1090,
+            "w": 460,
+            "h": 740,
+            "screen": "scan",
+            "dist": 4.6
+          }
+        ]
+      }
+    },
+    {
+      "narration": "That's because it brings its own light: infrared, a color your eyes simply can't see.",
+      "visual_type": "insight",
+      "data": {
+        "kicker": "Invisible light",
+        "icon": "sun-dim",
+        "text": "Its *own light*",
+        "small": "Infrared",
+        "small_at": "infrared"
+      }
+    },
+    {
+      "narration": "First, a flood illuminator washes your face in *infrared*.",
+      "visual_type": "facedots",
+      "data": {
+        "mode": "flood"
+      }
+    },
+    {
+      "narration": "Then a projector fires over *30,000* invisible dots onto it.",
+      "visual_type": "facedots",
+      "data": {
+        "mode": "dots",
+        "at": "fires"
+      }
+    },
+    {
+      "narration": "Dots on your nose land closer than dots on your cheeks, so the pattern *warps*.",
+      "visual_type": "facedots",
+      "data": {
+        "mode": "depth",
+        "at": 0.0,
+        "warp_at": "closer"
+      }
+    },
+    {
+      "narration": "An infrared camera reads that warped pattern, builds a *3D map* of your face, and compares it with the one it stored.",
+      "visual_type": "flow",
+      "data": {
+        "nodes": [
+          {
+            "text": "Infrared camera",
+            "icon": "camera"
+          },
+          {
+            "text": "3D depth map",
+            "icon": "scan-face"
+          },
+          {
+            "text": "Unlocked",
+            "icon": "lock-open"
+          }
+        ],
+        "at": [
+          0.03,
+          "builds",
+          "face"
+        ]
+      }
+    },
+    {
+      "narration": "All of this hides in the little black strip at the top of your screen.",
+      "visual_type": "insight",
+      "data": {
+        "kicker": "Where it hides",
+        "icon": "smartphone",
+        "text": "The *TrueDepth* camera",
+        "small": "Top of your screen",
+        "small_at": "top"
+      }
+    },
+    {
+      "narration": "Apple says the chance a random stranger unlocks it is about *one in a million*.",
+      "visual_type": "number",
+      "data": {
+        "value": 1000000,
+        "prefix": "1 in ",
+        "label": "Random stranger match",
+        "icon": "users",
+        "at": "chance",
+        "dur": 1.4,
+        "from": 1
+      }
+    },
+    {
+      "narration": "So even with the lights *off*,",
+      "visual_type": "reveal",
+      "data": {
+        "text": "Lights *off*…",
+        "size": 190
+      }
+    }
+  ]
+}

@@ -85,12 +85,34 @@ async function globe(job) {
       sat.add(halo); pl.add(sat); sats.push({ sat, j, ph: j / nsat * Math.PI * 2 * 3.7 });
     }
   }
+  // markers (lat/lon) and cable arcs (great circles that draw themselves in)
+  const ll = (lat, lon, r = 1) => { const a = lat * Math.PI / 180, b = lon * Math.PI / 180; return new THREE.Vector3(Math.cos(a) * Math.sin(b), Math.sin(a), Math.cos(a) * Math.cos(b)).multiplyScalar(r); };
+  const marks = [];
+  for (const m of job.markers || []) {
+    const p = ll(m.lat, m.lon, 1.012);
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.03, 20, 14), new THREE.MeshBasicMaterial({ color: col(job.accent) }));
+    const halo = new THREE.Mesh(new THREE.SphereGeometry(0.075, 20, 14), new THREE.MeshBasicMaterial({ color: col(job.accent), transparent: true, opacity: 0.25, depthWrite: false }));
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.06, 0.07, 48), new THREE.MeshBasicMaterial({ color: col(job.accent), transparent: true, opacity: 0.8, side: THREE.DoubleSide, depthWrite: false }));
+    ring.position.copy(p); ring.lookAt(p.clone().multiplyScalar(2));
+    dot.position.copy(p); halo.position.copy(p); grp.add(dot, halo, ring); marks.push(ring);
+  }
+  const arcs = [];
+  for (const [la1, lo1, la2, lo2] of job.arcs || []) {
+    const A = ll(la1, lo1), B = ll(la2, lo2), pts = [];
+    for (let i = 0; i <= 96; i++) { const u = i / 96; const v = new THREE.Vector3().copy(A).lerp(B, u).normalize(); pts.push(v.multiplyScalar(1.006 + 0.05 * Math.sin(Math.PI * u))); }
+    const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 160, 0.0065, 6, false);
+    const tube = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: col(job.accent) })); grp.add(tube); arcs.push(tube);
+  }
+  if (job.face_lon !== undefined) job.rot0 = -job.face_lon * Math.PI / 180 - (job.T0 + (job.frames / job.fps) / 2) * (job.speed ?? 0.12);
   C.position.set(0, 0.35, job.dist ?? 5.6); C.lookAt(0, 0, 0);
   grp.rotation.x = 0.38; atm.rotation.copy(grp.rotation);
   update = T => {
     grp.rotation.y = (job.rot0 ?? 0) + T * (job.speed ?? 0.12);
     orb.rotation.y = T * 0.03;
     const t = T - job.T0;
+    marks.forEach((r, i) => { const k = ((t * 0.8 + i * 0.3) % 1); r.scale.setScalar(1 + k * 2.2); r.material.opacity = 0.8 * (1 - k); });
+    arcs.forEach((a, i) => { const ta = (job.arc_at ?? 0) + i * (job.arc_stagger ?? 0.12); const k = Math.min(1, Math.max(0, (t - ta) / (job.arc_dur ?? 1.2)));
+      const n = a.geometry.index.count; a.geometry.setDrawRange(0, Math.floor(n * (1 - Math.pow(1 - k, 3)) / 36) * 36); a.visible = k > 0; });
     for (const s of sats) {
       const a = s.ph + T * 0.35; s.sat.position.set(Math.cos(a) * rad, 0, Math.sin(a) * rad);
       const ti = (job.reveal_at ?? -99) + s.j / Math.max(1, nsat) * (job.reveal_dur ?? 0);
@@ -135,6 +157,18 @@ function phone(job) {
   const scr = canvasTex(512, 1040, (x, w, h) => {
     const gr = x.createRadialGradient(w / 2, h * 0.42, 10, w / 2, h * 0.42, h * 0.6);
     x.fillStyle = '#060607'; x.fillRect(0, 0, w, h); gr.addColorStop(0, job.accent + '30'); gr.addColorStop(1, job.accent + '00'); x.fillStyle = gr; x.fillRect(0, 0, w, h);
+    if (job.screen === 'lock') {          // padlock
+      const cx = w / 2, cy = h * 0.44; x.strokeStyle = job.accent; x.lineWidth = 9; x.lineJoin = 'round'; x.lineCap = 'round';
+      x.beginPath(); x.roundRect(cx - 80, cy - 20, 160, 130, 22); x.stroke();
+      x.beginPath(); x.arc(cx, cy - 20, 52, Math.PI, 0); x.stroke();
+      x.beginPath(); x.arc(cx, cy + 40, 10, 0, Math.PI * 2); x.fillStyle = job.accent; x.fill();
+    }
+    if (job.screen === 'scan') {          // face-scan brackets + simple face
+      const cx = w / 2, cy = h * 0.43, s2 = 120, c = 34; x.strokeStyle = job.accent; x.lineWidth = 8; x.lineCap = 'round';
+      for (const [sx, sy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { x.beginPath(); x.moveTo(cx + sx * s2, cy + sy * (s2 - c)); x.lineTo(cx + sx * s2, cy + sy * s2); x.lineTo(cx + sx * (s2 - c), cy + sy * s2); x.stroke(); }
+      x.beginPath(); x.moveTo(cx - 34, cy - 30); x.lineTo(cx - 34, cy - 10); x.moveTo(cx + 34, cy - 30); x.lineTo(cx + 34, cy - 10); x.stroke();
+      x.beginPath(); x.arc(cx, cy + 22, 36, 0.15 * Math.PI, 0.85 * Math.PI); x.stroke();
+    }
     if (job.screen === 'pin') {           // a lost map pin
       x.strokeStyle = job.accent; x.lineWidth = 6; x.globalAlpha = 0.85; x.lineJoin = 'round'; const cx = w / 2, cy = h * 0.42;
       x.beginPath(); x.arc(cx, cy - 30, 70, Math.PI * 0.85, Math.PI * 0.15, false); x.lineTo(cx, cy + 110); x.closePath(); x.stroke();
@@ -142,7 +176,7 @@ function phone(job) {
     }
     x.fillStyle = '#000'; x.beginPath(); x.roundRect(w / 2 - 70, 26, 140, 40, 20); x.fill();   // dynamic island
   });
-  const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.69, 1.49), new THREE.MeshPhysicalMaterial({ color: 0x000000, emissiveMap: scr, emissive: 0xffffff, emissiveIntensity: 1.0, roughness: 0.18, metalness: 0, clearcoat: 0.6, clearcoatRoughness: 0.12, envMapIntensity: 0.22 }));
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.69, 1.49), new THREE.MeshBasicMaterial({ map: scr, toneMapped: false }));
   screen.position.z = 0.0435; g.add(screen);
   const back = new THREE.Mesh(new RoundedBoxGeometry(0.3, 0.3, 0.03, 4, 0.06), glass); back.position.set(-0.17, 0.53, -0.055); g.add(back);
   for (const [x, y] of [[-0.23, 0.6], [-0.11, 0.6], [-0.17, 0.47]]) {

@@ -1,0 +1,9 @@
+Before your message leaves your phone, it's locked with end-to-end encryption that only your friend's phone can open.
+It hops through cell towers, fiber and WhatsApp's servers — which only ever see scrambled noise.
+
+Sources:
+- WhatsApp – Encryption Overview, technical white paper (Signal Protocol; WhatsApp has no plaintext access): https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf
+- TechCrunch – WhatsApp is now delivering roughly 100 billion messages a day; over 2 billion users (Oct 2020): https://techcrunch.com/2020/10/29/whatsapp-is-now-delivering-roughly-100-billion-messages-a-day/
+- Panda Security – WhatsApp check marks explained (one grey, two grey, two blue): https://www.pandasecurity.com/en/mediacenter/whatsapp-check-marks/
+
+#whatsapp #encryption #endtoendencryption #shorts

@@ -1,0 +1,164 @@
+{
+  "topic": "What happens in the 1 second after you send a WhatsApp message?",
+  "category": "internet",
+  "title": "What Happens the Second You Hit Send on WhatsApp 💬",
+  "description": [
+    "Before your message leaves your phone, it's locked with end-to-end encryption that only your friend's phone can open.",
+    "It hops through cell towers, fiber and WhatsApp's servers — which only ever see scrambled noise."
+  ],
+  "sources": [
+    "WhatsApp – Encryption Overview, technical white paper (Signal Protocol; WhatsApp has no plaintext access): https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf",
+    "TechCrunch – WhatsApp is now delivering roughly 100 billion messages a day; over 2 billion users (Oct 2020): https://techcrunch.com/2020/10/29/whatsapp-is-now-delivering-roughly-100-billion-messages-a-day/",
+    "Panda Security – WhatsApp check marks explained (one grey, two grey, two blue): https://www.pandasecurity.com/en/mediacenter/whatsapp-check-marks/"
+  ],
+  "tags": [
+    "whatsapp",
+    "encryption",
+    "end-to-end encryption",
+    "how whatsapp works",
+    "privacy",
+    "messaging",
+    "quiet circuit",
+    "tech",
+    "science",
+    "shorts"
+  ],
+  "voice": "am_michael",
+  "speed": 1.0,
+  "cover": {
+    "small": "End-to-end encryption",
+    "big": "*Locked*|before it leaves"
+  },
+  "beats": [
+    {
+      "narration": "Your WhatsApp message is *locked* before it even leaves your phone.",
+      "visual_type": "hook",
+      "data": {
+        "shots": [
+          {
+            "small": "Your WhatsApp message",
+            "big": "is *locked*"
+          },
+          {
+            "at": "before",
+            "big": "before it leaves."
+          }
+        ],
+        "objects": [
+          {
+            "type": "phone",
+            "cx": 500,
+            "cy": 1090,
+            "w": 460,
+            "h": 740,
+            "screen": "lock",
+            "dist": 4.6
+          }
+        ]
+      }
+    },
+    {
+      "narration": "It's called end-to-end encryption: your phone locks it with a key only your friend's phone has.",
+      "visual_type": "insight",
+      "data": {
+        "kicker": "End-to-end",
+        "icon": "key-round",
+        "text": "Only *one key*",
+        "small": "On their phone",
+        "small_at": "friend"
+      }
+    },
+    {
+      "narration": "Then, in a fraction of a second, it hops to a cell tower, races through fiber cables, and reaches WhatsApp's servers.",
+      "visual_type": "flow",
+      "data": {
+        "nodes": [
+          {
+            "text": "Cell tower",
+            "icon": "radio-tower"
+          },
+          {
+            "text": "Fiber cables",
+            "icon": "cable"
+          },
+          {
+            "text": "WhatsApp servers",
+            "icon": "server"
+          }
+        ],
+        "at": [
+          0.02,
+          "races",
+          "reaches"
+        ]
+      }
+    },
+    {
+      "narration": "But those servers only ever see *scrambled noise*. Not even WhatsApp itself can read what you wrote.",
+      "visual_type": "versus",
+      "data": {
+        "a": {
+          "label": "What you send",
+          "value": "See you at 8",
+          "icon": "message-circle"
+        },
+        "b": {
+          "label": "What the server sees",
+          "value": "x9#Qa·7f!",
+          "icon": "lock"
+        },
+        "a_at": 0.0,
+        "b_at": "scrambled"
+      }
+    },
+    {
+      "narration": "One grey tick: the server has it. Two ticks: it reached their phone. Blue: they *read* it.",
+      "visual_type": "list",
+      "data": {
+        "title": "What the ticks mean",
+        "items": [
+          {
+            "icon": "check",
+            "text": "Server has it",
+            "key": false
+          },
+          {
+            "icon": "check-check",
+            "text": "On their phone",
+            "key": false
+          },
+          {
+            "icon": "check-check",
+            "text": "Read",
+            "key": true
+          }
+        ],
+        "at": [
+          0.02,
+          "Two",
+          "Blue"
+        ]
+      }
+    },
+    {
+      "narration": "And WhatsApp does this about *100 billion* times a day, for over two billion people.",
+      "visual_type": "number",
+      "data": {
+        "value": 100,
+        "unit": "billion",
+        "label": "Messages a day (2020)",
+        "icon": "message-circle",
+        "at": 0.03,
+        "dur": 1.2
+      }
+    },
+    {
+      "narration": "And every *single* one?",
+      "visual_type": "reveal",
+      "data": {
+        "text": "Every *single* one?",
+        "size": 170
+      }
+    }
+  ]
+}

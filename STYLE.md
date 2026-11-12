@@ -43,7 +43,7 @@ Si el guion no indica categoría, `engine.guess_category()` la deduce del tema. 
 - Sombras suaves bajo el texto sobre imagen. **Viñeta sutil** y un **dither estático imperceptible (±1 nivel)** contra los escalones de los degradados. Nada de grano animado: YouTube lo convierte en bloques.
 
 ## 5. 3D
-- Objetos protagonistas con **Three.js** (`studio3d.cjs`, Chromium sin pantalla): `globe` (globo de puntos con costas reales de Natural Earth + órbitas), `satellite`, `phone`, `chip`, `battery` (celda pouch de aluminio), `router` (cúpula de malla con anillo de luz).
+- Objetos protagonistas con **Three.js** (`studio3d.cjs`, Chromium sin pantalla): `globe` (globo de puntos con costas reales de Natural Earth + órbitas), `satellite`, `phone`, `chip`, `battery` (celda pouch de aluminio), `router` (cúpula de malla con anillo de luz). El globo admite `markers` (lat/lon) con `face_lon` para girar hacia el punto y `arcs` (cables que se trazan solos). La pantalla del móvil es un panel sin reflejos (MeshBasic): nunca reflejos especulares que la quemen a blanco.
 - Iluminación de estudio (RoomEnvironment + key light + rim light del color de acento), tone mapping ACES, giro lento y continuo entre cortes.
 - Materiales sobrios: metal, cristal oscuro. Nada de colores saturados en superficies grandes.
 - Para añadir un objeto: nueva función en `studio3d.cjs` y registrarla en `BUILD`.

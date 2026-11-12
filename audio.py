@@ -139,6 +139,7 @@ def mix(voice, dur, events, seed=0, music_gain=.20, duck_gain=.075):
     N = int(round(dur * SR))
     v = np.zeros(N, np.float32); v[: min(N, len(voice))] = voice[:N]
     music, src = load_music(dur, seed)
+    if len(music) < N: music = np.concatenate([music, np.zeros((N - len(music), 2), music.dtype)])
     # ducking envelope from the voice
     e = _lp(np.abs(v).astype(np.float64), int(.03 * SR))
     e = _lp(np.clip(e / .04, 0, 1), int(.25 * SR))
