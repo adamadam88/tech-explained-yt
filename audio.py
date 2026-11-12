@@ -1,6 +1,6 @@
 """Audio for Shorts: royalty-free procedural music, synthesized SFX, ducking and mixdown (48 kHz stereo).
 
-Music: if assets/music/ contains .mp3/.wav/.ogg/.m4a tracks (e.g. from the YouTube Audio Library) one is
+Music: ambient / minimal electronic. If assets/music/ contains .mp3/.wav/.ogg/.m4a tracks (e.g. from the YouTube Audio Library) one is
 picked per Short; otherwise an original track is synthesized (so it is copyright-free by construction).
 SFX: generated once into assets/sfx/*.wav; replace any of those files with your own to change the sound.
 """
@@ -28,55 +28,55 @@ def _lp(x, k):
     c = np.cumsum(np.concatenate([[0.0], x])); y = (c[k:] - c[:-k]) / k
     return np.concatenate([y, np.full(k - 1, y[-1] if len(y) else 0.0)])
 
-# ------------------------------------------------------------------ music
+# ------------------------------------------------------------------ music (ambient / minimal electronic)
 PROGS = [
-    [(0, 3, 7), (8, 12, 15), (3, 7, 10), (10, 14, 17)],   # i VI III VII
-    [(0, 3, 7), (5, 8, 12), (8, 12, 15), (7, 11, 14)],    # i iv VI V
-    [(0, 4, 7), (7, 11, 14), (9, 12, 16), (5, 9, 12)],    # I V vi IV
-    [(0, 3, 7), (10, 14, 17), (8, 12, 15), (7, 10, 14)],  # i VII VI v
+    [(0, 7, 10, 15), (8, 15, 19, 24), (3, 10, 14, 19), (10, 17, 22, 26)],   # i(add9)  VImaj7  IIImaj7  VII
+    [(0, 7, 14, 15), (5, 12, 15, 20), (8, 15, 19, 22), (7, 14, 17, 22)],    # i9  iv  VI  v
+    [(0, 7, 11, 16), (9, 16, 19, 24), (5, 12, 16, 21), (7, 14, 19, 23)],    # Imaj7  vi  IV  V
 ]
+
+def reverb(x, secs=2.6, mix=.35, seed=1):
+    """Stereo convolution reverb with a decaying-noise impulse (FFT)."""
+    rng = np.random.default_rng(seed); n = int(secs * SR); tt = np.arange(n) / SR
+    out = np.empty_like(x)
+    for c in range(2):
+        ir = rng.standard_normal(n) * np.exp(-tt * 3.2 / secs * 2.3); ir = _lp(ir, 3); ir /= np.sqrt((ir ** 2).sum())
+        L = len(x) + n; N = 1 << (L - 1).bit_length()
+        wet = np.fft.irfft(np.fft.rfft(x[:, c], N) * np.fft.rfft(ir, N), N)[:len(x)]
+        out[:, c] = x[:, c] * (1 - mix) + wet * mix
+    return out
 
 def synth_music(dur, seed=0):
     rng = np.random.default_rng(seed)
-    bpm = int(rng.choice([112, 116, 120, 124, 128])); beat = 60 / bpm; bar = 4 * beat
-    root = 45 + int(rng.integers(0, 8)); prog = PROGS[int(rng.integers(0, len(PROGS)))]
-    arp_pat = [[0, 1, 2, 1], [0, 2, 1, 2], [0, 1, 2, 3], [2, 1, 0, 1]][int(rng.integers(0, 4))]
-    N = int((dur + 2) * SR); buf = np.zeros((N, 2), np.float32)
+    bpm = int(rng.choice([88, 92, 96, 100])); beat = 60 / bpm; bar = 4 * beat
+    root = 45 + int(rng.integers(0, 7)); prog = PROGS[int(rng.integers(0, len(PROGS)))]
+    N = int((dur + 3) * SR); dry = np.zeros((N, 2), np.float32); drums = np.zeros((N, 2), np.float32)
     nb = int(math.ceil(dur / bar)) + 1
     for b in range(nb):
-        t0 = b * bar; ch = prog[b % 4]
-        # pad: soft additive saw, detuned L/R
-        tt = _t(bar + .3); env = np.minimum(1, tt / .25) * np.exp(-tt * .25) * np.minimum(1, (bar + .3 - tt) / .3)
-        for n in ch:
-            f = mtof(root + 12 + n)
-            for side, det in ((-0.6, .997), (0.6, 1.003)):
-                s = sum(np.sin(2 * np.pi * f * det * k * tt) / k for k in range(1, 7))
-                _add(buf, t0, (.018 * env * s).astype(np.float32), side)
-        for q in range(4):
-            tq = t0 + q * beat
-            # kick
-            tk = _t(.35); fk = 45 + 90 * np.exp(-tk * 30)
-            _add(buf, tq, (.55 * np.sin(2 * np.pi * np.cumsum(fk) / SR) * np.exp(-tk * 9)).astype(np.float32))
-            # snare / clap on 2 & 4
-            if q in (1, 3):
-                ts = _t(.22); nz = rng.standard_normal(len(ts))
-                s = .16 * np.diff(nz, prepend=0) * np.exp(-ts * 22) + .12 * np.sin(2 * np.pi * 190 * ts) * np.exp(-ts * 30)
-                _add(buf, tq, s.astype(np.float32), .05)
-            # hats on off-beats
-            for e in (0.5, 0.75) if q % 2 else (0.5,):
-                th = _t(.05); hz = np.diff(rng.standard_normal(len(th)), prepend=0)
-                _add(buf, tq + e * beat, (.05 * hz * np.exp(-th * 90)).astype(np.float32), .3)
-            # bass eighths with sidechain-ish envelope
-            for e in (0, .5):
-                tb = _t(beat * .48); f = mtof(root - 12 + ch[0])
-                s = np.tanh(1.8 * np.sin(2 * np.pi * f * tb)) * np.minimum(1, tb / .03) * np.exp(-tb * 5)
-                _add(buf, tq + e * beat, (.16 * s).astype(np.float32))
-            # pluck arp 16ths
-            for e in range(4):
-                n = ch[arp_pat[(q * 4 + e) % 4] % 3] + (12 if arp_pat[(q * 4 + e) % 4] == 3 else 0)
-                ta = _t(.2); f = mtof(root + 24 + n)
-                s = (2 / np.pi) * np.arcsin(np.sin(2 * np.pi * f * ta)) * np.exp(-ta * 18)
-                _add(buf, tq + e * beat / 4, (.045 * s).astype(np.float32), -.45 if e % 2 else .45)
+        t0 = b * bar; ch = prog[(b // 2) % 4]                       # one chord every two bars
+        if b % 2 == 0:                                              # soft pad, slow attack/release
+            d = 2 * bar + 1.5; tt = _t(d)
+            env = np.minimum(1, tt / 1.6) * np.minimum(1, (d - tt) / 1.5)
+            for n in ch:
+                f = mtof(root + 12 + n)
+                for side, det in ((-.7, .9975), (.7, 1.0025)):
+                    s = np.sin(2 * np.pi * f * det * tt) + .18 * np.sin(4 * np.pi * f * det * tt)
+                    _add(dry, t0, (.03 * env * s).astype(np.float32), side)
+            ts = _t(2 * bar); f = mtof(root - 12 + ch[0])           # warm sub
+            _add(dry, t0, (.12 * np.sin(2 * np.pi * f * ts) * np.minimum(1, ts / .4) * np.minimum(1, (2 * bar - ts) / .4)).astype(np.float32))
+        for e in range(8):                                          # sparse glassy plucks (8ths)
+            if rng.random() < .45: continue
+            n = ch[int(rng.integers(0, len(ch)))] + 24; ta = _t(.9); f = mtof(root + n)
+            s = (np.sin(2 * np.pi * f * ta) + .3 * np.sin(2 * np.pi * 2 * f * ta)) * np.exp(-ta * 5.5)
+            _add(dry, t0 + e * beat / 2, (.035 * s).astype(np.float32), float(rng.uniform(-.6, .6)))
+        if b >= 1:                                                  # felt kick on 1 & 3, whisper hats
+            for q in (0, 2):
+                tk = _t(.3); fk = 42 + 50 * np.exp(-tk * 25)
+                _add(drums, t0 + q * beat, (.22 * np.sin(2 * np.pi * np.cumsum(fk) / SR) * np.exp(-tk * 11)).astype(np.float32))
+            for e in range(8):
+                th = _t(.03); hz = np.diff(rng.standard_normal(len(th)), prepend=0)
+                _add(drums, t0 + (e + .5) * beat / 2, (.012 * rng.uniform(.5, 1) * hz * np.exp(-th * 140)).astype(np.float32), .35)
+    buf = reverb(dry, 3.0, .45) + reverb(drums, 1.0, .12, 2)
     buf = buf[: int(dur * SR)]
     return buf / (np.abs(buf).max() + 1e-6) * .9
 
@@ -91,33 +91,28 @@ def load_music(dur, seed=0):
     m = np.tile(m, (reps, 1))[: int(dur * SR)]
     return m / (np.abs(m).max() + 1e-6) * .9, os.path.basename(path)
 
-# ------------------------------------------------------------------ sfx
+# ------------------------------------------------------------------ sfx (subtle)
 def _sfx(name):
     rng = np.random.default_rng(7)
-    if name == "whoosh":
-        t = _t(.45); n = rng.standard_normal(len(t)); env = np.sin(np.pi * np.clip(t / .45, 0, 1)) ** 2
-        lo, hi = _lp(n, 40), _lp(n, 6); k = np.sin(np.pi * t / .45)
-        s = (lo * (1 - k) + hi * k) * env * 1.4
-        return np.stack([s * (1 - t / .45 * .6), s * (.4 + t / .45 * .6)], 1)
-    if name == "pop":
-        t = _t(.12); f = 900 * np.exp(-t * 18) + 280
-        s = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 32)
-    elif name == "click":
-        t = _t(.05); s = (np.sin(2 * np.pi * 2400 * t) * .6 + rng.standard_normal(len(t)) * .4) * np.exp(-t * 120)
-    elif name == "ding":
-        t = _t(.7); s = (np.sin(2 * np.pi * 1318.5 * t) + .5 * np.sin(2 * np.pi * 1975.5 * t)) * np.exp(-t * 6) * .6
-    elif name == "impact":
-        t = _t(.8); f = 40 + 120 * np.exp(-t * 14)
-        s = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 4.5) + _lp(rng.standard_normal(len(t)), 8) * np.exp(-t * 25) * 1.5
-    elif name in ("riser", "riser_short"):
-        d = 1.4 if name == "riser" else .7; t = _t(d); x = t / d
-        n = rng.standard_normal(len(t)); f = 220 + 1100 * x ** 2
-        s = (_lp(n, 3) * .5 + .35 * np.sin(2 * np.pi * np.cumsum(f) / SR)) * x ** 2.2
+    if name == "swish":                       # soft air movement on cuts
+        d = .32; t = _t(d); n = rng.standard_normal(len(t)); k = np.sin(np.pi * t / d) ** 3
+        s = (_lp(n, 22) * (1 - k * .6) + _lp(n, 9) * k * .6) * k * 2.2
+        return np.stack([s * (1 - .4 * t / d), s * (.6 + .4 * t / d)], 1)
+    if name == "tick":                        # tiny, clean UI click
+        t = _t(.035); s = (np.sin(2 * np.pi * 3200 * t) * .5 + np.sin(2 * np.pi * 1600 * t) * .5) * np.exp(-t * 170)
+    elif name == "chime":                     # soft glass tone for the key moments
+        t = _t(1.6); s = sum(a * np.sin(2 * np.pi * f * t) * np.exp(-t * dcy) for f, a, dcy in ((1046.5, .6, 3.2), (1568, .3, 4.5), (2093, .12, 6)))
+        s = s * np.minimum(1, t / .008)
+    elif name == "rise":                      # gentle swell into the reveal
+        d = 1.2; t = _t(d); x = t / d; n = rng.standard_normal(len(t))
+        s = (_lp(n, 12) * .6 + .2 * np.sin(2 * np.pi * np.cumsum(300 + 500 * x ** 2) / SR)) * x ** 2.5 * (1 - smooth_end(x))
     else:
         raise KeyError(name)
     return np.stack([s, s], 1)
 
-SFX_GAIN = {"whoosh": .32, "pop": .42, "click": .30, "ding": .30, "impact": .55, "riser": .28, "riser_short": .2}
+def smooth_end(x): return np.clip((x - .94) / .06, 0, 1)
+
+SFX_GAIN = {"swish": .10, "tick": .10, "chime": .085, "rise": .12}
 
 def sfx(name):
     os.makedirs(SFX_DIR, exist_ok=True)
@@ -139,7 +134,7 @@ def resample(x, sr_in):
                        capture_output=True, check=True).stdout
     return np.frombuffer(p, np.float32).copy()
 
-def mix(voice, dur, events, seed=0, music_gain=.17, duck_gain=.055):
+def mix(voice, dur, events, seed=0, music_gain=.20, duck_gain=.075):
     """voice: mono float @SR placed already; events: [(t, name)]. Returns stereo float32 (N, 2)."""
     N = int(round(dur * SR))
     v = np.zeros(N, np.float32); v[: min(N, len(voice))] = voice[:N]
@@ -152,7 +147,7 @@ def mix(voice, dur, events, seed=0, music_gain=.17, duck_gain=.055):
     fx = np.zeros((N, 2), np.float32)
     for t, name in events:
         s = sfx(name) * SFX_GAIN.get(name, .3); i = int(t * SR)
-        if name.startswith("riser"): i -= len(s)      # risers END on the event
+        if name == "rise": i -= len(s)               # the swell ENDS on the event
         a, b = max(0, i), min(N, i + len(s))
         if b > a: fx[a:b] += s[a - i:b - i]
     out = out + fx

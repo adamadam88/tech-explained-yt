@@ -7,8 +7,8 @@
   python make_short.py "<topic>" --review                    # only voice + timings + keyframe sheets (fast)
 
 Pipeline: script.json (written by Claude, facts verified) -> Kokoro TTS per beat -> faster-whisper word
-timestamps -> one mp4 per beat (engine.py, 1080x1920@30) -> concat -c copy -> music+SFX+ducking mix ->
-mux -c:v copy (AAC, loudnorm -14 LUFS) -> thumbnail/title/description/tags/script.md in output/<date>_<slug>/.
+timestamps -> 3D hero objects (studio3d.cjs, Three.js) -> one mp4 per beat (engine.py, 1080x1920@60) -> concat -c copy -> music+SFX+ducking mix ->
+mux -c:v copy (AAC, loudnorm -14 LUFS). Design system: STYLE.md -> thumbnail/title/description/tags/script.md in output/<date>_<slug>/.
 """
 import argparse, csv, datetime, difflib, hashlib, json, os, re, shutil, subprocess, sys
 from multiprocessing import Pool
@@ -17,7 +17,7 @@ import numpy as np, soundfile as sf
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SCRIPTS, OUTPUT, BUILD, MODELS = (os.path.join(ROOT, d) for d in ("scripts", "output", "build", "models"))
 TOPICS = os.path.join(ROOT, "topics.csv")
-FPS = 30
+FPS = 60
 MAX_MB = 95
 
 def log(*a): print("»", *a, flush=True)
@@ -140,55 +140,89 @@ def word_timings(beats, voices, work):
     return res, sim
 
 # ------------------------------------------------------------------ timeline
-def build_timeline(script, voices, words):
+def accent_of(script):
+    import engine
+    cat = script.get("category") or engine.guess_category(script["topic"])
+    return cat, engine.ACCENTS[cat]
+
+def build_timeline(script, voices, words, accent):
     import engine
     beats, T, events = [], 0.0, []
-    trans = script.get("transitions") or engine.TRANSITIONS
     n = len(script["beats"])
     for i, (b, (a, sr, _), ww) in enumerate(zip(script["beats"], voices, words)):
         dur = len(a) / sr
-        gap = b.get("gap", .11 if re.search(r"[.?!:]\**$", b["narration"].strip()) else .06)
-        if i == n - 1: gap = b.get("gap", .1)
+        gap = b.get("gap", .14 if re.search(r"[.?!:]\**$", b["narration"].strip()) else .07)
+        if i == n - 1: gap = max(gap, engine.OUTRO + .12)          # room for the signature closing transition
         frames = int(round((dur + gap) * FPS)); D = frames / FPS
-        beat = {"index": i, "visual_type": b["visual_type"], "data": b.get("data", {}), "words": ww, "D": D, "T0": T,
-                "frames": frames, "transition": b.get("transition", "punch" if i == 0 else trans[i % len(trans)]),
-                "narration": b["narration"]}
+        data = b.get("data", {})
+        beat = {"index": i, "visual_type": b["visual_type"], "data": data, "words": ww, "D": D, "T0": T,
+                "frames": frames, "narration": b["narration"], "outro": i == n - 1,
+                "objects": [dict(o) for o in engine.objects_for(b["visual_type"], data)]}
         beat["chunks"] = engine.caption_chunks(ww)
         beats.append(beat)
-        ctx = engine.Ctx(None, D, ww, T, i)
-        if i > 0: events.append((T, "whoosh"))
-        if b["visual_type"] == "reveal": events.append((T, "riser"))
-        for t, s in engine.EVENTS[b["visual_type"]](beat["data"], ctx):
+        ctx = engine.Ctx(accent, D, ww, T, i)
+        if i > 0: events.append((T, "swish"))
+        if b["visual_type"] == "reveal": events.append((T, "rise"))
+        for t, s in engine.EVENTS[b["visual_type"]](data, ctx):
             if 0 <= t < D: events.append((T + t, s))
         T += D
+    events.append((T - engine.OUTRO, "swish"))
     events.sort(); dedup = []
     for t, s in events:
-        if dedup and abs(dedup[-1][0] - t) < .07 and s not in ("riser", "impact"): continue
+        if dedup and abs(dedup[-1][0] - t) < .09 and s not in ("rise", "chime"): continue
         dedup.append((t, s))
     return beats, T, dedup
 
+# ------------------------------------------------------------------ 3D objects + icons (studio3d.cjs)
+def run_studio(jobs_doc, work):
+    p = os.path.join(work, "studio_jobs.json"); json.dump(jobs_doc, open(p, "w"))
+    subprocess.run(["node", os.path.join(ROOT, "studio3d.cjs"), p], check=True)
+
+def prepare_objects(beats, accent, work):
+    import engine
+    todo = []; code = hashlib.md5(open(os.path.join(ROOT, "studio3d.cjs"), "rb").read()).hexdigest()[:8]
+    for b in beats:
+        for o, j in zip(b["objects"], engine.object_jobs(b, accent)):
+            h = hashlib.md5((code + json.dumps(j, sort_keys=True)).encode()).hexdigest()[:12]
+            d = os.path.join(work, "3d", f"{b['index']:02d}_{o['type']}_{h}"); o["dir"] = d
+            if not os.path.exists(os.path.join(d, "done")): todo.append(dict(j, out=d))
+    if todo:
+        log(f"3D: {len(todo)} objetos, {sum(j['frames'] for j in todo)} fotogramas (Three.js)…")
+        run_studio({"objects": todo, "parallel": min(4, os.cpu_count() or 2)}, work)
+
+def prepare_icons(work):
+    import engine
+    req = sorted(engine.ICON_REQ)
+    if not req: return False
+    log(f"iconos Lucide: {', '.join(n for n, _ in req)}")
+    run_studio({"icons": [{"name": n, "size": s, "stroke": engine.ICON_STROKE, "out": os.path.join(engine.ICON_DIR, f"{n}_{s}.png")} for n, s in req]}, work)
+    engine.ICON_REQ.clear(); engine.icon_mask.cache_clear(); return True
+
 # ------------------------------------------------------------------ video
+ENC = ["-c:v", "libx264", "-preset", "medium", "-crf", "16", "-maxrate", "22M", "-bufsize", "44M", "-pix_fmt", "yuv420p",
+       "-profile:v", "high", "-level", "5.1", "-g", "120", "-bf", "2"]
+
 def _render_scene(job):
     import engine
-    beat, palname, seed, path = job
-    pal = engine.PALETTES[palname]; bg = engine.Background(pal, seed)
+    beat, accent, seed, path, f0 = job
+    bg = engine.Background(accent, seed)
     cmd = ["ffmpeg", "-y", "-v", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{engine.W}x{engine.H}", "-r", str(FPS),
-           "-i", "-", "-c:v", "libx264", "-preset", "medium", "-crf", "21", "-pix_fmt", "yuv420p", "-profile:v", "high",
-           "-g", "30", "-r", str(FPS), "-movflags", "+faststart", path]
+           "-i", "-"] + ENC + ["-r", str(FPS), path]
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     for f in range(beat["frames"]):
-        p.stdin.write(engine.render_frame(beat, f / FPS, bg, pal).tobytes())
+        p.stdin.write(np.ascontiguousarray(engine.render_frame(beat, f / FPS, bg, accent, fi=f0 + f)).tobytes())
     p.stdin.close()
     if p.wait() != 0: raise RuntimeError("ffmpeg failed on " + path)
     return path
 
-def render_video(beats, palname, seed, work):
-    os.makedirs(os.path.join(work, "scenes"), exist_ok=True)
-    jobs = [(b, palname, seed, os.path.join(work, "scenes", f"{b['index']:02d}_{b['visual_type']}.mp4")) for b in beats]
+def render_video(beats, accent, seed, work):
+    d = os.path.join(work, "scenes"); shutil.rmtree(d, ignore_errors=True); os.makedirs(d)
+    f0 = np.cumsum([0] + [b["frames"] for b in beats])
+    jobs = [(b, accent, seed, os.path.join(d, f"{b['index']:02d}_{b['visual_type']}.mp4"), int(f0[i])) for i, b in enumerate(beats)]
     order = sorted(range(len(jobs)), key=lambda i: -beats[i]["frames"])
     with Pool(min(len(jobs), os.cpu_count() or 2)) as pool:
         list(pool.imap_unordered(_render_scene, [jobs[i] for i in order]))
-    lst = os.path.join(work, "scenes", "list.txt")
+    lst = os.path.join(d, "list.txt")
     open(lst, "w").write("".join(f"file '{j[3]}'\n" for j in jobs))
     out = os.path.join(work, "video.mp4")
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy", out], check=True)
@@ -200,41 +234,43 @@ def contact_sheet(frames, path, cols=3, scale=3):
     import engine
     w, h = engine.W // scale, engine.H // scale; rows = (len(frames) + cols - 1) // cols
     sheet = Image.new("RGB", (w * cols, h * rows), (0, 0, 0)); d = ImageDraw.Draw(sheet)
-    for k, (im, label) in enumerate(frames):
+    for k, (im, lab) in enumerate(frames):
         x, y = (k % cols) * w, (k // cols) * h
-        sheet.paste(engine.safe_overlay(im).resize((w, h)), (x, y)); d.text((x + 8, y + 6), label, fill=(255, 255, 0))
-    sheet.save(path, quality=88)
+        sheet.paste(engine.safe_overlay(im).resize((w, h), Image.LANCZOS), (x, y)); d.text((x + 8, y + 6), lab, fill=(255, 255, 0))
+    sheet.save(path, quality=90)
 
-def review_sheets(beats, palname, seed, work, tag="review"):
+def review_sheets(beats, accent, seed, work, tag="review"):
+    from PIL import Image
     import engine
-    pal = engine.PALETTES[palname]; bg = engine.Background(pal, seed)
+    bg = engine.Background(accent, seed)
     d = os.path.join(work, tag); shutil.rmtree(d, ignore_errors=True); os.makedirs(d)
     frames = []
     for b in beats:
-        for fr in (.12, .5, .97):
-            t = min(b["D"] - 1 / FPS, b["D"] * fr if fr != .12 else .12)
-            frames.append((engine.render_frame(b, t, bg, pal), f"{b['index']} {b['visual_type']} t={t:.2f}"))
+        for fr in (.18, .55, .97):
+            t = min(b["D"] - 1 / FPS, b["D"] * fr if fr != .18 else .18)
+            frames.append((Image.fromarray(engine.render_frame(b, t, bg, accent)), f"{b['index']} {b['visual_type']} t={t:.2f}"))
     paths = []
     for k in range(0, len(frames), 9):
         p = os.path.join(d, f"sheet_{k // 9 + 1}.jpg"); contact_sheet(frames[k:k + 9], p); paths.append(p)
     return paths
 
-def final_sheet(video, beats, work):
+def keyframes(video, beats, work, n=6):
+    """Extract n key frames from the final mp4 (spread over the beats) for the designer's eye check."""
     from PIL import Image
-    d = os.path.join(work, "final_frames"); shutil.rmtree(d, ignore_errors=True); os.makedirs(d)
+    d = os.path.join(work, "keyframes"); shutil.rmtree(d, ignore_errors=True); os.makedirs(d)
+    pick = [beats[round(i * (len(beats) - 1) / (n - 1))] for i in range(n)]
     frames = []
-    for b in beats:
-        t = b["T0"] + b["D"] * .6
-        p = os.path.join(d, f"{b['index']:02d}.jpg")
-        subprocess.run(["ffmpeg", "-y", "-v", "error", "-ss", f"{t:.3f}", "-i", video, "-frames:v", "1", "-q:v", "3", p], check=True)
-        frames.append((Image.open(p).convert("RGB"), f"{b['index']} @{t:.1f}s"))
+    for b in pick:
+        t = b["T0"] + b["D"] * .7; p = os.path.join(d, f"{b['index']:02d}.png")
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-ss", f"{t:.3f}", "-i", video, "-frames:v", "1", p], check=True)
+        frames.append((Image.open(p).convert("RGB"), f"{b['index']} {b['visual_type']} @{t:.1f}s"))
     paths = []
-    for k in range(0, len(frames), 9):
-        p = os.path.join(work, f"final_sheet_{k // 9 + 1}.jpg"); contact_sheet(frames[k:k + 9], p); paths.append(p)
+    for k in (0, 3):
+        p = os.path.join(work, f"keyframes_{k // 3 + 1}.jpg"); contact_sheet(frames[k:k + 3], p, 3, 2); paths.append(p)
     return paths
 
 # ------------------------------------------------------------------ outputs
-def write_meta(script, beats, out, total, music_src):
+def write_meta(script, beats, out, total, music_src, cat):
     title = script["title"].strip()
     if "#shorts" not in title.lower(): title += " #shorts"
     if len(title.replace("#shorts", "").strip()) > 60: log("AVISO: título > 60 caracteres")
@@ -245,15 +281,15 @@ def write_meta(script, beats, out, total, music_src):
     hashtags = " ".join("#" + re.sub(r"\W", "", t) for t in tags[:3])
     open(os.path.join(out, "description.txt"), "w").write("\n".join(desc) + f"\n\nSources:\n{src}\n\n{hashtags} #shorts\n")
     open(os.path.join(out, "tags.txt"), "w").write(", ".join(tags) + "\n")
-    md = [f"# {script['title']}", "", f"**Topic:** {script['topic']}  ", f"**Voice:** {script.get('voice')} @ {script.get('speed')}  ",
-          f"**Palette:** {script.get('palette')}  **Music:** {music_src}  **Length:** {total:.1f}s", "",
+    md = [f"# {script['title']}", "", f"**Topic:** {script['topic']}  ", f"**Category:** {cat}  ",
+          f"**Voice:** {script.get('voice')} @ {script.get('speed')}  ", f"**Music:** {music_src}  **Length:** {total:.1f}s", "",
           "| # | t | visual | narration |", "|---|---|---|---|"]
     for b in beats: md.append(f"| {b['index'] + 1} | {b['T0']:.1f}s | {b['visual_type']} | {b['narration'].replace('*', '**')} |")
     md += ["", "## Sources", src, ""]
     open(os.path.join(out, "script.md"), "w").write("\n".join(md))
 
 def probe(path):
-    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration,size:stream=codec_name,width,height,r_frame_rate",
+    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration,size,bit_rate:stream=codec_name,width,height,r_frame_rate",
                         "-of", "json", path], capture_output=True, text=True, check=True)
     return json.loads(r.stdout)
 
@@ -271,22 +307,25 @@ def make(topic, review_only=False, mark=True):
     slug = slugify(script.get("topic", topic)); work = os.path.join(BUILD, slug); os.makedirs(work, exist_ok=True)
     nwords = sum(len(b["narration"].split()) for b in script["beats"])
     log(f"[{slug}] {len(script['beats'])} beats, {nwords} palabras" + ("" if 90 <= nwords <= 130 else "  (AVISO: fuera de 90–130)"))
-    voice, speed = script.get("voice", "am_michael"), script.get("speed", 1.12)
-    pal = script.get("palette", "cyan"); seed = int(hashlib.md5(slug.encode()).hexdigest(), 16) % 10000
+    voice, speed = script.get("voice", "af_heart"), script.get("speed", 1.05)
+    cat, accent = accent_of(script); seed = int(hashlib.md5(slug.encode()).hexdigest(), 16) % 10000
+    log(f"categoría {cat} → acento {accent}")
 
     log("voz (Kokoro)…"); voices = tts_beats(script["beats"], voice, speed, work)
     log("tiempos por palabra (faster-whisper)…"); words, sim = word_timings(script["beats"], voices, work)
     log(f"   transcripción vs guion: {sim:.0%}" + ("" if sim > .85 else "  (AVISO: revisar pronunciación)"))
-    beats, total, events = build_timeline(script, voices, words)
+    beats, total, events = build_timeline(script, voices, words, accent)
     log(f"   duración {total:.1f}s, {nwords / total * 60:.0f} palabras/min, {len(events)} efectos")
     if not 35 <= total <= 55: log("AVISO: duración fuera de 35–55 s")
 
-    sheets = review_sheets(beats, pal, seed, work)
-    log("fotogramas clave para revisar:", *sheets)
+    prepare_objects(beats, accent, work)
+    sheets = review_sheets(beats, accent, seed, work)
+    if prepare_icons(work): sheets = review_sheets(beats, accent, seed, work)
+    log("hojas de revisión:", *sheets)
     if review_only: return work
 
-    log("render de escenas…"); video = render_video(beats, pal, seed, work)
-    log("audio (música + efectos + ducking)…")
+    log("render de escenas (60 fps)…"); video = render_video(beats, accent, seed, work)
+    log("audio (música ambiental + efectos sutiles + ducking)…")
     voice_track = np.zeros(int(total * audio.SR) + audio.SR, np.float32)
     for b, (a, sr, _) in zip(beats, voices):
         v = audio.resample(a, sr); i = int(round(b["T0"] * audio.SR)); voice_track[i:i + len(v)] += v[: len(voice_track) - i]
@@ -294,21 +333,25 @@ def make(topic, review_only=False, mark=True):
     mixdown, music_src = audio.mix(voice_track * .9, total, events, seed=seed)
     wav = os.path.join(work, "mix.wav"); sf.write(wav, mixdown, audio.SR)
 
-    out = os.path.join(OUTPUT, f"{datetime.date.today().isoformat()}_{slug}"); os.makedirs(out, exist_ok=True)
+    out = os.path.join(OUTPUT, f"{datetime.date.today().isoformat()}_{slug}")
+    shutil.rmtree(out, ignore_errors=True); os.makedirs(out)
     mp4 = os.path.join(out, "short.mp4")
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", video, "-i", wav, "-map", "0:v", "-map", "1:a", "-c:v", "copy",
-                    "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
+                    "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-c:a", "aac", "-b:a", "256k", "-ar", "48000",
                     "-t", f"{total:.3f}", "-movflags", "+faststart", mp4], check=True)
-    pal_d = engine.PALETTES[pal]; bg = engine.Background(pal_d, seed)
-    cover = script.get("cover_beat", 0); b0 = beats[cover]
-    engine.render_frame(b0, b0["D"] - 1 / FPS, bg, pal_d, captions=False, cam=False).save(os.path.join(out, "thumbnail.jpg"), quality=92)
-    write_meta(script, beats, out, total, music_src)
+    from PIL import Image
+    cv_ = script.get("cover", {}); cb = beats[cv_.get("beat", next((b["index"] for b in beats if b["objects"]), 0))]
+    obj = engine.obj_frame(cb["objects"][0]["dir"], cb["frames"] // 2) if cb["objects"] else None
+    first = script["beats"][0]["data"].get("shots", [{}])[0]
+    Image.fromarray(engine.cover(cb, obj, engine.Background(accent, seed), accent, cv_.get("big", first.get("big", script["title"])),
+                                 cv_.get("small", first.get("small")))).save(os.path.join(out, "thumbnail.jpg"), quality=94)
+    write_meta(script, beats, out, total, music_src, cat)
     json.dump(script, open(os.path.join(out, "script.json"), "w", encoding="utf-8"), indent=2, ensure_ascii=False)
     info = probe(mp4); size = int(info["format"]["size"]) / 1e6; dur = float(info["format"]["duration"])
     v = next(s for s in info["streams"] if s["codec_name"] == "h264")
-    log(f"OK {mp4}: {v['width']}x{v['height']} {v['r_frame_rate']} {dur:.1f}s {size:.1f} MB")
+    log(f"OK {mp4}: {v['width']}x{v['height']} {v['r_frame_rate']} {dur:.1f}s {size:.1f} MB ({int(info['format']['bit_rate']) / 1e6:.1f} Mb/s)")
     if size > MAX_MB: log("AVISO: pasa de 95 MB")
-    log("hoja final (fotogramas del mp4):", *final_sheet(mp4, beats, work))
+    log("6 fotogramas clave del mp4:", *keyframes(mp4, beats, work))
     if mark: mark_done(script.get("topic", topic))
     return out
 

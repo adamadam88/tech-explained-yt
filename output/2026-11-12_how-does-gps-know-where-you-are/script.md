@@ -1,23 +1,24 @@
 # Your Phone Has NO Idea Where You Are 🛰️
 
 **Topic:** How does GPS know where you are?  
-**Voice:** am_michael @ 1.15  
-**Palette:** cyan  **Music:** synth  **Length:** 38.3s
+**Category:** space  
+**Voice:** af_heart @ 1.05  
+**Music:** synth  **Length:** 38.2s
 
 | # | t | visual | narration |
 |---|---|---|---|
 | 1 | 0.0s | hook | Your phone has **no idea** where you are. |
-| 2 | 2.1s | globe | But over **30 satellites** do, circling 20,200 kilometers above you. |
-| 3 | 7.3s | signal | Each one nonstop shouts its **position** and the exact **time**. |
-| 4 | 10.8s | big_number | That signal needs about **0.07 seconds** to reach you. |
-| 5 | 14.7s | diagram | Your phone measures that delay and turns it into **distance**. |
-| 6 | 17.8s | rings | One distance puts you somewhere on a giant **bubble**. |
-| 7 | 20.6s | rings | Three bubbles cross at **exactly one spot**: you. |
-| 8 | 23.5s | list | A fourth satellite fixes your phone's cheap clock. |
-| 9 | 26.1s | didyouknow | But here's the twist: up there, **time runs faster**. |
-| 10 | 29.1s | versus | **38 microseconds** faster every day, thanks to Einstein's relativity. |
-| 11 | 33.8s | chart | Ignore it, and your map drifts about **10 kilometers** a day. |
-| 12 | 37.0s | reveal | So without **Einstein**, |
+| 2 | 1.9s | globe | But over **30 satellites** do, circling 20,200 kilometers above you. |
+| 3 | 6.9s | signal | Each one nonstop broadcasts its **position** and the exact **time**. |
+| 4 | 10.7s | number | That signal needs about **0.07 seconds** to reach you. |
+| 5 | 14.5s | flow | Your phone measures that delay and turns it into **distance**. |
+| 6 | 17.6s | rings | One distance puts you somewhere on a giant **sphere**. |
+| 7 | 20.2s | rings | Three spheres cross at **exactly one point**: you. |
+| 8 | 23.1s | list | A fourth satellite fixes your phone's cheap clock. |
+| 9 | 25.7s | insight | But here's the twist: up there, **time runs faster**. |
+| 10 | 28.6s | versus | **38 microseconds** faster every day, thanks to Einstein's relativity. |
+| 11 | 33.2s | chart | Ignore it, and your map drifts about **10 kilometers** a day. |
+| 12 | 36.4s | reveal | So without **Einstein**, |
 
 ## Sources
 - GPS.gov – Space Segment (constellation, 20,200 km MEO orbit): https://www.gps.gov/systems/gps/space
