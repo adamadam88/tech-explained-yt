@@ -1,0 +1,175 @@
+{
+  "topic": "Why does your phone get hot?",
+  "category": "energy",
+  "title": "Your Phone Is Secretly a Tiny Heater 🔥",
+  "description": [
+    "Almost all the power your phone's chip uses ends up as heat — and phones have no fan to blow it away.",
+    "Graphite sheets and vapor chambers spread it into the case; if that's not enough, the phone slows itself down."
+  ],
+  "sources": [
+    "Android Central – Tech Talk: why does my phone get hot?: https://www.androidcentral.com/phones/tech-talk-why-does-my-phone-get-hot",
+    "BGR – Why smartphones don't have built-in fans (passive cooling, graphite sheets, vapor chambers): https://www.bgr.com/2193362/smartphones-cooling-explained-no-fans/",
+    "CG Director – CPU TDP explained (power a processor consumes is exhausted as heat): https://www.cgdirector.com/cpu-tdp-thermal-design-power-explained",
+    "SamMobile – Why is my phone getting hot? (thermal throttling): https://www.sammobile.com/news/why-is-my-phone-getting-hot-and-should-i-worry/"
+  ],
+  "tags": [
+    "phone overheating",
+    "why is my phone hot",
+    "thermal throttling",
+    "smartphone",
+    "heat",
+    "chips",
+    "quiet circuit",
+    "tech",
+    "science",
+    "shorts"
+  ],
+  "voice": "bm_george",
+  "speed": 1.0,
+  "cover": {
+    "small": "Why phones get hot",
+    "big": "A tiny|*heater*"
+  },
+  "beats": [
+    {
+      "narration": "Your phone is a tiny *heater* that happens to make calls.",
+      "visual_type": "hook",
+      "data": {
+        "shots": [
+          {
+            "small": "Your phone is",
+            "big": "a tiny *heater*"
+          },
+          {
+            "at": "happens",
+            "big": "that makes calls."
+          }
+        ],
+        "objects": [
+          {
+            "type": "phone",
+            "cx": 500,
+            "cy": 1090,
+            "w": 460,
+            "h": 740,
+            "dist": 4.6
+          }
+        ]
+      }
+    },
+    {
+      "narration": "Almost all the power your chip uses ends up as *heat*.",
+      "visual_type": "heat",
+      "data": {
+        "mode": "chip",
+        "at": [
+          0.05
+        ]
+      }
+    },
+    {
+      "narration": "Electricity flows through billions of tiny switches, and every switch sheds a little warmth.",
+      "visual_type": "flow",
+      "data": {
+        "nodes": [
+          {
+            "text": "Electricity",
+            "icon": "zap"
+          },
+          {
+            "text": "Billions of switches",
+            "icon": "cpu"
+          },
+          {
+            "text": "= heat",
+            "icon": "flame"
+          }
+        ],
+        "at": [
+          0.03,
+          "billions",
+          "warmth"
+        ]
+      }
+    },
+    {
+      "narration": "The hottest spots: the chip, the battery while charging, and the screen.",
+      "visual_type": "heat",
+      "data": {
+        "mode": "sources",
+        "at": [
+          "chip",
+          "battery",
+          "screen"
+        ]
+      }
+    },
+    {
+      "narration": "That's why it warms up most when you game, film video, or charge it.",
+      "visual_type": "insight",
+      "data": {
+        "kicker": "Peak heat",
+        "icon": "gamepad-2",
+        "text": "Games, video, *charging*",
+        "small": "Heavy use",
+        "small_at": "game"
+      }
+    },
+    {
+      "narration": "And unlike a laptop, your phone has *no fan* to push that heat out.",
+      "visual_type": "insight",
+      "data": {
+        "kicker": "No fan",
+        "icon": "fan",
+        "text": "Nowhere to *go*",
+        "small": "Passive cooling",
+        "small_at": "fan"
+      }
+    },
+    {
+      "narration": "So it spreads heat through graphite sheets, and in some phones vapor chambers, into the case.",
+      "visual_type": "list",
+      "data": {
+        "title": "How it cools",
+        "items": [
+          {
+            "icon": "layers",
+            "text": "Graphite sheets",
+            "key": false
+          },
+          {
+            "icon": "droplets",
+            "text": "Vapor chambers",
+            "key": false
+          },
+          {
+            "icon": "smartphone",
+            "text": "Out through the case",
+            "key": true
+          }
+        ],
+        "at": [
+          "graphite",
+          "vapor",
+          "case"
+        ]
+      }
+    },
+    {
+      "narration": "If it still runs too hot, it *slows itself down* on purpose to cool off.",
+      "visual_type": "heat",
+      "data": {
+        "mode": "throttle",
+        "at": "slows"
+      }
+    },
+    {
+      "narration": "Because deep *down*,",
+      "visual_type": "reveal",
+      "data": {
+        "text": "Deep *down*…",
+        "size": 190
+      }
+    }
+  ]
+}

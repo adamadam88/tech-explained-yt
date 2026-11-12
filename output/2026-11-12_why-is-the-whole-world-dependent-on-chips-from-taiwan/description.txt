@@ -1,0 +1,10 @@
+One company in Taiwan, TSMC, makes about 70% of the world's contract-made chips — for Apple, Nvidia and AMD.
+A 2021 study put 92% of the most advanced (sub-10 nm) chipmaking capacity in Taiwan.
+
+Sources:
+- Focus Taiwan / TrendForce – TSMC held 69.9% of the global foundry market in 2025: https://focustaiwan.tw/business/202603130009
+- SIA & BCG – Strengthening the Global Semiconductor Supply Chain (2021): 92% of capacity below 10 nm in Taiwan, 8% in South Korea: https://www.semiconductors.org/wp-content/uploads/2021/05/BCG-x-SIA-Strengthening-the-Global-Semiconductor-Value-Chain-April-2021_1.pdf
+- Tom's Hardware – Apple A17 Pro: 3 nm, 19 billion transistors: https://tomshardware.com/news/apple-a17-pro-3nm-iphone-15-pro
+- HWBusters – ASML is the only maker of EUV lithography machines; TSMC builds chips for Nvidia, Apple and AMD: https://hwbusters.com/news/the-quiet-monopoly-powering-every-advanced-chip-in-the-world/
+
+#tsmc #taiwan #semiconductors #shorts

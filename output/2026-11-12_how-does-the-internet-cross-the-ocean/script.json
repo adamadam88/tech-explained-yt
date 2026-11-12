@@ -1,0 +1,317 @@
+{
+  "topic": "How does the internet cross the ocean?",
+  "category": "internet",
+  "title": "The Internet Is Mostly at the Bottom of the Ocean 🌊",
+  "description": [
+    "Over 99% of data between continents travels through about 600 cables lying on the seafloor.",
+    "Inside: hair-thin glass fibers carrying light, steel for strength and copper powering repeaters every 50–100 km."
+  ],
+  "sources": [
+    "TeleGeography – congressional testimony: submarine cables carry over 99% of intercontinental data: https://resources.telegeography.com/hubfs/Tim%20Stronge%20Written%20Congressional%20Testimony%20%7C%20TeleGeography.pdf",
+    "TeleGeography – How many submarine cables are there, anyway? (~600 systems, ~1.48 million km in 2025): https://blog.telegeography.com/how-many-submarine-cables-are-there-anyway",
+    "ICPC – Damage to submarine cables: 150–200 faults a year, ~70–80% from accidental human activity such as fishing and anchors: https://iscpc.org/publications/icpc-viewpoints/damage-to-submarine-cables-from-dragged-anchors/",
+    "Fibre Systems – ICPC: sharks don't dine on subsea fibre-optic cables: https://www.fibre-systems.com/news/sharks-dont-dine-subsea-fibre-optic-cables-says-icpc",
+    "US patent 4278835 – submarine cable: optical fibres in a conductive tube, steel wires, conductor powering the repeaters: https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/4278835",
+    "Hengtong – submarine fiber optic cable: repeaters every 50–100 km: https://www.hengtongglobal.com/info/submarine-fiber-optic-cable-103155332.html"
+  ],
+  "tags": [
+    "submarine cables",
+    "undersea cables",
+    "how the internet works",
+    "internet",
+    "fiber optics",
+    "ocean",
+    "quiet circuit",
+    "tech",
+    "science",
+    "shorts"
+  ],
+  "voice": "am_puck",
+  "speed": 1.0,
+  "cover": {
+    "small": "How the internet works",
+    "big": "It's mostly|*underwater*"
+  },
+  "beats": [
+    {
+      "narration": "Most of your internet lives at the bottom of the *ocean*.",
+      "visual_type": "hook",
+      "data": {
+        "shots": [
+          {
+            "small": "Most of your internet",
+            "big": "lives *underwater*"
+          },
+          {
+            "at": "bottom",
+            "big": "on the *seafloor*."
+          }
+        ],
+        "objects": [
+          {
+            "type": "globe",
+            "cx": 500,
+            "cy": 1070,
+            "w": 760,
+            "h": 760,
+            "sats": 0,
+            "arcs": [
+              [
+                40.7,
+                -74,
+                50.1,
+                -5.5
+              ],
+              [
+                36.8,
+                -76,
+                43.3,
+                -2.9
+              ],
+              [
+                26,
+                -80,
+                -3.7,
+                -38.5
+              ],
+              [
+                38.7,
+                -9.1,
+                -3.7,
+                -38.5
+              ],
+              [
+                34,
+                -118.5,
+                35.7,
+                139.7
+              ],
+              [
+                45.5,
+                -123.9,
+                35,
+                140
+              ],
+              [
+                21.3,
+                -157.8,
+                34,
+                -118.5
+              ],
+              [
+                1.3,
+                103.8,
+                -33.9,
+                151.2
+              ],
+              [
+                -33.9,
+                18.4,
+                38.7,
+                -9.1
+              ],
+              [
+                19,
+                72.8,
+                11.6,
+                43.1
+              ],
+              [
+                13,
+                80,
+                1.3,
+                103.8
+              ],
+              [
+                22.3,
+                114.2,
+                1.3,
+                103.8
+              ]
+            ],
+            "arc_at": 0.0,
+            "arc_dur": 1.0,
+            "arc_stagger": 0.08,
+            "face_lon": -35,
+            "speed": 0.06
+          }
+        ]
+      }
+    },
+    {
+      "narration": "Over 99% of data between continents travels through cables on the seafloor.",
+      "visual_type": "number",
+      "data": {
+        "value": 99,
+        "unit": "%+",
+        "label": "Of data between continents",
+        "sub": "Through subsea cables",
+        "sub_at": "cables",
+        "icon": "cable",
+        "at": 0.03,
+        "dur": 1.1
+      }
+    },
+    {
+      "narration": "There are around *600* of them, stretching roughly 1.5 million kilometers around the planet.",
+      "visual_type": "globe",
+      "data": {
+        "count": 600,
+        "label": "Cable systems",
+        "sub": "≈ 1.5 million km",
+        "sub_at": "stretching",
+        "at": 0.03,
+        "dur": 1.4,
+        "objects": [
+          {
+            "type": "globe",
+            "cx": 500,
+            "cy": 950,
+            "w": 820,
+            "h": 820,
+            "sats": 0,
+            "arcs": [
+              [
+                40.7,
+                -74,
+                50.1,
+                -5.5
+              ],
+              [
+                36.8,
+                -76,
+                43.3,
+                -2.9
+              ],
+              [
+                26,
+                -80,
+                -3.7,
+                -38.5
+              ],
+              [
+                38.7,
+                -9.1,
+                -3.7,
+                -38.5
+              ],
+              [
+                34,
+                -118.5,
+                35.7,
+                139.7
+              ],
+              [
+                45.5,
+                -123.9,
+                35,
+                140
+              ],
+              [
+                21.3,
+                -157.8,
+                34,
+                -118.5
+              ],
+              [
+                1.3,
+                103.8,
+                -33.9,
+                151.2
+              ],
+              [
+                -33.9,
+                18.4,
+                38.7,
+                -9.1
+              ],
+              [
+                19,
+                72.8,
+                11.6,
+                43.1
+              ],
+              [
+                13,
+                80,
+                1.3,
+                103.8
+              ],
+              [
+                22.3,
+                114.2,
+                1.3,
+                103.8
+              ]
+            ],
+            "arc_at": 0.0,
+            "arc_dur": 0.8,
+            "arc_stagger": 0.05,
+            "face_lon": 150,
+            "speed": 0.06,
+            "at": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "narration": "Inside each one, hair-thin glass fibers carry your data as pulses of *light*.",
+      "visual_type": "section",
+      "data": {
+        "highlight": "fibers",
+        "fibers_at": 0.05,
+        "steel_at": 99.0,
+        "copper_at": 99.0,
+        "sheath_at": 99.0
+      }
+    },
+    {
+      "narration": "Around them, steel wires add strength, and copper carries power for the repeaters.",
+      "visual_type": "section",
+      "data": {
+        "highlight": "copper",
+        "fibers_at": 0.0,
+        "steel_at": "steel",
+        "copper_at": "copper",
+        "sheath_at": "power"
+      }
+    },
+    {
+      "narration": "Every 50 to 100 kilometers, a repeater *boosts* the fading light.",
+      "visual_type": "insight",
+      "data": {
+        "kicker": "Every 50–100 km",
+        "icon": "zap",
+        "text": "A *boost*",
+        "small": "Repeaters",
+        "small_at": "repeater"
+      }
+    },
+    {
+      "narration": "Their biggest enemy isn't sharks. It's ships: fishing gear and *anchors* cause most of the 150 to 200 breaks every year.",
+      "visual_type": "versus",
+      "data": {
+        "a": {
+          "label": "Sharks",
+          "value": "Rarely",
+          "icon": "fish"
+        },
+        "b": {
+          "label": "Fishing and anchors",
+          "value": "70–80%",
+          "icon": "anchor"
+        },
+        "a_at": 0.0,
+        "b_at": "ships"
+      }
+    },
+    {
+      "narration": "So every time a page *loads*,",
+      "visual_type": "reveal",
+      "data": {
+        "text": "Every *page* you load…",
+        "size": 150
+      }
+    }
+  ]
+}

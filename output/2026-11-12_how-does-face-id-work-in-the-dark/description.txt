@@ -1,0 +1,9 @@
+Face ID brings its own invisible light: an infrared flood illuminator and over 30,000 projected dots.
+Dots on your nose land closer than on your cheeks — the warped pattern becomes a 3D map of your face.
+
+Sources:
+- Wikipedia – Face ID (TrueDepth camera: dot projector with more than 30,000 infrared dots, flood illuminator, infrared camera): https://en.wikipedia.org/wiki/Face_ID
+- Gizmodo – How Apple's new Face ID works (1 in 1,000,000 chance of a random match): https://gizmodo.com/how-apples-new-face-id-works-1803813400
+- HuffPost UK – iPhone X Face ID: the infrared flood illuminator lets it work in the dark: https://huffingtonpost.co.uk/amp/entry/apples-iphone-x-face-id-heres-why-its-better-and-worse-than-a-fingerprint-sensor_uk_59b90196e4b02da0e13d8ff2
+
+#faceid #iphone #infrared #shorts

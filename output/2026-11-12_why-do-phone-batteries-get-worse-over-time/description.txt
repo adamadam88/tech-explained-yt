@@ -1,0 +1,10 @@
+Your battery isn't just 'old': lithium gets trapped in a growing SEI layer on the graphite and never comes back.
+Heat and sitting at 100% speed it up. Apple rates ~80% capacity after 500 cycles (1,000 on iPhone 15).
+
+Sources:
+- Apple – Maximizing Battery Life and Lifespan (above 35 °C can permanently damage capacity): https://www.apple.com/batteries/maximizing-performance/
+- AppleInsider – iPhone 15 battery rated for 1,000 cycles; iPhone 14 and earlier, 500: https://appleinsider.com/articles/24/02/20/apple-says-the-iphone-15-battery-is-more-durable-than-it-originally-thought
+- Battery Design – SEI growth (irreversible lithium loss, faster at high temperature and high state of charge): https://www.batterydesign.net/chemistry/solid-electrolyte-interphase/sei-growth/
+- Ionworks – Batteries 101: degradation (loss of lithium inventory, heat, high SOC): https://docs.ionworks.com/guide/batteries-101/degradation
+
+#battery #batteryhealth #lithiumion #shorts

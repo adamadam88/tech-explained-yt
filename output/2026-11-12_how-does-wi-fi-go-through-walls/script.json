@@ -1,0 +1,184 @@
+{
+  "topic": "How does Wi-Fi go through walls?",
+  "category": "internet",
+  "title": "Why Wi-Fi Goes Through Walls (But Not Metal) 📶",
+  "description": [
+    "Wi-Fi is light you can't see, with waves about 12 cm long — drywall and wood barely slow it down.",
+    "Concrete soaks it up, metal reflects it, and water (including you) absorbs it."
+  ],
+  "sources": [
+    "NASA Imagine the Universe – The electromagnetic spectrum (radio, microwaves and light are the same radiation): https://imagine.gsfc.nasa.gov/science/toolbox/emspectrum1.html",
+    "NASA Earthdata – Electromagnetic spectrum (visible light ≈ 380–700 nm): https://earthdata.nasa.gov/learn/earth-observation-data-basics/electromagnetic-spectrum",
+    "Interline – Building materials and Wi-Fi signal loss at 2.4 GHz and 5 GHz (drywall 3–6 dB, brick 8–10 dB, concrete up to ~25 dB): https://interline.pl/Information-and-Tips/Building-Materials-and-Wi-Fi-Signal-Loss-2.4-GHz-and-5-GHz",
+    "eero – How to boost Wi-Fi signals through walls (metal reflects, water absorbs): https://eero.com/blog/articles/how-to-boost-wifi-signals-through-walls",
+    "USGS – The water in you (the human body is up to ~60% water): https://www.usgs.gov/special-topics/water-science-school/science/water-you-water-and-human-body",
+    "Sciencing – What's the mesh inside your microwave door (metal enclosure and mesh reflect the microwaves back inside): https://www.sciencing.com/1834813/whats-mesh-inside-microwave-door-function-explained"
+  ],
+  "tags": [
+    "wifi",
+    "wi-fi",
+    "how wifi works",
+    "router",
+    "wifi signal",
+    "physics",
+    "quiet circuit",
+    "science",
+    "tech",
+    "shorts"
+  ],
+  "voice": "af_bella",
+  "speed": 1.05,
+  "cover": {
+    "small": "How Wi-Fi works",
+    "big": "Your walls|are *glass*"
+  },
+  "beats": [
+    {
+      "narration": "Your walls are basically *glass*.",
+      "visual_type": "hook",
+      "data": {
+        "shots": [
+          {
+            "small": "To Wi-Fi",
+            "big": "Your walls are"
+          },
+          {
+            "at": "glass",
+            "big": "*glass*."
+          }
+        ],
+        "objects": [
+          {
+            "type": "router",
+            "cx": 500,
+            "cy": 1060,
+            "w": 600,
+            "h": 520,
+            "dist": 4.8
+          }
+        ]
+      }
+    },
+    {
+      "narration": "Here's why: Wi-Fi is actually *light*.",
+      "visual_type": "insight",
+      "data": {
+        "kicker": "Same physics",
+        "icon": "wifi",
+        "text": "Wi-Fi *is light*",
+        "small": "Invisible light",
+        "small_at": "light"
+      }
+    },
+    {
+      "narration": "Its waves are about *12 centimeters* long, wiggling 2.4 billion times a second.",
+      "visual_type": "number",
+      "data": {
+        "value": 12.5,
+        "decimals": 1,
+        "unit": "cm",
+        "label": "One Wi-Fi wave",
+        "sub": "2.4 GHz",
+        "sub_at": "wiggling",
+        "icon": "ruler",
+        "at": 0.03
+      }
+    },
+    {
+      "narration": "The light you see? Less than a thousandth of a millimeter.",
+      "visual_type": "versus",
+      "data": {
+        "a": {
+          "label": "Visible light",
+          "value": "< 0.001 mm",
+          "icon": "sun"
+        },
+        "b": {
+          "label": "Wi-Fi",
+          "value": "125 mm",
+          "icon": "wifi"
+        },
+        "a_at": 0.0,
+        "b_at": "thousandth"
+      }
+    },
+    {
+      "narration": "Waves that big slip through drywall and wood almost untouched.",
+      "visual_type": "wall",
+      "data": {
+        "material": "drywall"
+      }
+    },
+    {
+      "narration": "Thick concrete and brick soak up more, especially on 5 gigahertz.",
+      "visual_type": "wall",
+      "data": {
+        "material": "concrete"
+      }
+    },
+    {
+      "narration": "But metal acts like a *mirror* and bounces it right back.",
+      "visual_type": "wall",
+      "data": {
+        "material": "metal"
+      }
+    },
+    {
+      "narration": "It's also why your microwave is a metal box: it keeps its waves inside.",
+      "visual_type": "insight",
+      "data": {
+        "kicker": "Same trick",
+        "icon": "microwave",
+        "text": "A metal *cage*",
+        "small": "Waves stay inside",
+        "small_at": "keeps"
+      }
+    },
+    {
+      "narration": "And water absorbs it, so your own body blocks the signal too.",
+      "visual_type": "insight",
+      "data": {
+        "kicker": "Plot twist",
+        "icon": "droplet",
+        "text": "You're a *wall* too",
+        "small": "About 60% water",
+        "small_at": "body"
+      }
+    },
+    {
+      "narration": "Every wall in the way costs signal, and the losses add up.",
+      "visual_type": "chart",
+      "data": {
+        "title": "Approx. loss at 2.4 GHz",
+        "bars": [
+          [
+            "Drywall",
+            4
+          ],
+          [
+            "Brick",
+            10
+          ],
+          [
+            "Concrete",
+            23
+          ]
+        ],
+        "unit": " dB",
+        "at": [
+          0.05,
+          0.25,
+          "losses"
+        ]
+      }
+    },
+    {
+      "narration": "That's why, to *Wi-Fi*,",
+      "visual_type": "reveal",
+      "data": {
+        "text": "To *Wi-Fi*…",
+        "size": 190
+      }
+    }
+  ]
+}

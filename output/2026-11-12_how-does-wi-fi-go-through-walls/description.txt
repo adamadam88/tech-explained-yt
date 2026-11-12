@@ -1,0 +1,12 @@
+Wi-Fi is light you can't see, with waves about 12 cm long — drywall and wood barely slow it down.
+Concrete soaks it up, metal reflects it, and water (including you) absorbs it.
+
+Sources:
+- NASA Imagine the Universe – The electromagnetic spectrum (radio, microwaves and light are the same radiation): https://imagine.gsfc.nasa.gov/science/toolbox/emspectrum1.html
+- NASA Earthdata – Electromagnetic spectrum (visible light ≈ 380–700 nm): https://earthdata.nasa.gov/learn/earth-observation-data-basics/electromagnetic-spectrum
+- Interline – Building materials and Wi-Fi signal loss at 2.4 GHz and 5 GHz (drywall 3–6 dB, brick 8–10 dB, concrete up to ~25 dB): https://interline.pl/Information-and-Tips/Building-Materials-and-Wi-Fi-Signal-Loss-2.4-GHz-and-5-GHz
+- eero – How to boost Wi-Fi signals through walls (metal reflects, water absorbs): https://eero.com/blog/articles/how-to-boost-wifi-signals-through-walls
+- USGS – The water in you (the human body is up to ~60% water): https://www.usgs.gov/special-topics/water-science-school/science/water-you-water-and-human-body
+- Sciencing – What's the mesh inside your microwave door (metal enclosure and mesh reflect the microwaves back inside): https://www.sciencing.com/1834813/whats-mesh-inside-microwave-door-function-explained
+
+#wifi #howwifiworks #router #shorts

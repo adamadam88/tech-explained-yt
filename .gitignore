@@ -1,0 +1,6 @@
+models/
+build/
+out/
+__pycache__/
+*.pyc
+node_modules/
