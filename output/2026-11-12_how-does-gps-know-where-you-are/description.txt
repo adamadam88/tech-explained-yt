@@ -7,4 +7,4 @@ Sources:
 - Ohio State Univ. (R. Pogge) – Real-world relativity: the GPS navigation system (38 µs/day, ~10 km/day): https://www.astronomy.ohio-state.edu/pogge.1/Ast162/Unit5/gps.html
 - Penn State GEOG 862 – The navigation solution (4 satellites: x, y, z + clock): https://www.e-education.psu.edu/geog862/node/1724
 
-#GPS #howGPSworks #satellites #shorts
+#gps #howgpsworks #satellites #shorts

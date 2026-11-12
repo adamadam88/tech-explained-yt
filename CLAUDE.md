@@ -4,13 +4,14 @@ Eres el productor de **Quiet Circuit** (@quietcircuit), un canal de **YouTube Sh
 
 ## Objetivo
 Comando único: `python make_short.py "<tema>"` (o sin tema → coge el siguiente `todo` de `topics.csv` y lo marca `done`). También `python make_short.py --batch 5` para hacer 5 seguidos. Cada Short va a `output/<fecha>_<slug>/`:
-- `short.mp4`: **1080x1920 vertical**, 30 fps, H.264 + AAC, **35–55 s**, menos de 95 MB
+- `short.mp4`: **1080x1920 vertical**, 60 fps, H.264 + AAC, color BT.709, **35–55 s**, menos de 95 MB
+- `short_youtube_1440p.mp4`: **el archivo que Adam sube a YouTube** (1440x2560, mejor calidad tras la recompresión de YouTube), menos de 95 MB
 - `thumbnail.jpg` (1080x1920, fotograma portada), `title.txt` (máx. ~60 caracteres + #shorts), `description.txt` (2 líneas + fuentes), `tags.txt`, `script.md`
 Todo gratis: nada de APIs de pago.
 
 ## Marca (norma obligatoria)
 - Identidad en `branding/` (ver `branding/README.md`): símbolo "Filament" (Q de circuito con un nodo encendido), logotipo "Quiet" fino + "Circuit" firme, color de marca Filament `#FFE7B8`.
-- Cada Short lleva el logo discreto de esquina y termina con el **cierre de marca idéntico** (el símbolo se dibuja y el nodo se enciende en el acento de la categoría). Nunca otro logo, otro nombre ni otro cierre.
+- Cada Short lleva el logo discreto arriba centrado y termina con el **cierre de marca idéntico** (el símbolo se dibuja y el nodo se enciende en el acento de la categoría). Nunca otro logo, otro nombre ni otro cierre.
 - Perfil (`branding/profile_800.png`), banner (`branding/banner_2560x1440.jpg`) y marca de agua (`branding/watermark_150.png`) ya están listos; si cambian, se regeneran con `python branding/brandkit.py final`.
 
 ## Diseño (norma obligatoria)

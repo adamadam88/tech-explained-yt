@@ -40,7 +40,7 @@ Si el guion no indica categoría, `engine.guess_category()` la deduce del tema. 
 ## 4. Profundidad
 - Capa de **bokeh desenfocado** que deriva despacio + resplandor suave del acento detrás del protagonista.
 - **Paneles de cristal esmerilado** (`engine.glass`): fondo desenfocado, tinte 5 %, brillo superior, borde fino 1,5 px, sombra suave.
-- Sombras suaves bajo el texto sobre imagen. **Viñeta sutil** y **grano de película muy ligero** en todo el fotograma.
+- Sombras suaves bajo el texto sobre imagen. **Viñeta sutil** y un **dither estático imperceptible (±1 nivel)** contra los escalones de los degradados. Nada de grano animado: YouTube lo convierte en bloques.
 
 ## 5. 3D
 - Objetos protagonistas con **Three.js** (`studio3d.cjs`, Chromium sin pantalla): `globe` (globo de puntos con costas reales de Natural Earth + órbitas), `satellite`, `phone`, `chip`, `battery` (celda pouch de aluminio), `router` (cúpula de malla con anillo de luz).
@@ -70,14 +70,18 @@ Nada importante en los 250 px de arriba, los 420 px de abajo ni los 140 px de la
   compartida por `branding/brandkit.py` y `engine.py` (`MARK_*`). No deformar, no añadir efectos, no recolorear el anillo.
 - **Logotipo de texto**: "Quiet" Inter Display Light gris + "Circuit" SemiBold blanco. En tamaños pequeños: `QUIET CIRCUIT` Medium/SemiBold, tracking +24 %.
 - **Color de marca**: monocromo + **Filament `#FFE7B8`** solo en el nodo (perfil, banner, marca de agua). **En los vídeos, el nodo usa el acento de la categoría.**
-- **En cada Short**: logo de esquina discreto (símbolo de 34 px + `QUIET CIRCUIT` 21 px, gris) arriba a la izquierda, dentro de la zona segura.
+- **En cada Short**: logo discreto **arriba y centrado** (símbolo de 32 px + `QUIET CIRCUIT` 21 px, gris, y = 300), dentro de la zona segura y a salvo del recorte lateral de los móviles altos.
 - **Cierre idéntico en todos los vídeos** (0,85 s, `engine.outro`): la escena se desenfoca y funde a `#0A0A0A`, el símbolo se dibuja solo
   (anillo → pista), el nodo se enciende con un `chime` suave y aparece `QUIET CIRCUIT`. Luego el bucle vuelve al gancho.
-- **Portadas** con el mismo esquema: logo de esquina, etiqueta pequeña, titular de 2–4 palabras (palabra clave en acento) y el objeto 3D debajo.
+- **Portadas** con el mismo esquema: logo arriba centrado, etiqueta pequeña, titular de 2–4 palabras (palabra clave en acento) y el objeto 3D debajo.
 - Recursos del canal en `branding/`: perfil 800x800, banner 2560x1440 (contenido dentro de 1546x423), marca de agua 150x150.
 
-## 11. Calidad
-1080x1920, **60 fps**, H.264 High (CRF 16, máx. 22 Mb/s), AAC 256 kb/s, **< 95 MB**.
+## 11. Calidad y encuadre
+- 1080x1920, **60 fps**, H.264 High (CRF 16, máx. 22 Mb/s), AAC 256 kb/s, **< 95 MB**.
+- **Color BT.709 etiquetado** (conversión RGB→YUV con matriz BT.709 + `colorspace/primaries/trc = bt709`, rango TV). Sin etiquetas, YouTube desplaza colores y contraste.
+- **Composición centrada en el fotograma (x = 540)**: las plantillas se diseñan alrededor de `CX = 500` y `engine.camera` las recoloca centradas al 96 % (`OUT_CX`, `FIT`).
+  Los móviles 20:9 recortan ~10 % por lado: nada importante a menos de ~110 px de los bordes laterales.
+- **Para subir a YouTube usar `short_youtube_1440p.mp4`** (1440x2560, reescalado Lanczos, < 95 MB): las subidas ≥1440p reciben mejores códecs y se ven más limpias. Juzga la calidad cuando YouTube termine de procesar la versión HD.
 
 ## 12. Control de calidad antes de entregar
 `make_short.py` extrae **6 fotogramas clave** del mp4 final (`build/<slug>/keyframes_*.jpg`). Revísalos con ojo de diseñador:

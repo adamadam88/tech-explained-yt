@@ -17,7 +17,8 @@ SAFE_T, SAFE_B, SAFE_R, SAFE_L = 250, 420, 140, 60          # YouTube UI no-go z
 X0, X1 = SAFE_L, W - SAFE_R                                 # 60 .. 940
 CX = (X0 + X1) // 2                                         # 500: content centre (left of the buttons)
 MAXW = 800                                                  # visual text width (camera adds ~3 %)
-CAP_W, CAP_Y = 840, 1345                                    # captions (drawn after the camera)
+CAP_W, CAP_Y = 800, 1345                                    # captions (drawn after the camera)
+OUT_CX, FIT = W // 2, .96            # final frame: content (designed around CX) is centred on 540 and fitted to 96 %
 ROOT = os.path.dirname(os.path.abspath(__file__))
 ICON_DIR = os.path.join(ROOT, "assets", "icons")
 FD = "/usr/share/fonts/opentype/inter/"
@@ -225,7 +226,8 @@ class Background:
         v = 1 - .38 * np.clip(((xx - W / 2) / (W * .78)) ** 2 + ((yy - H / 2) / (H * .7)) ** 2, 0, 1)
         self.vig = (v * 256).astype(np.uint16)[..., None]
         rng = np.random.default_rng(seed)
-        self.grain = [cv2.GaussianBlur(rng.normal(0, 3.4, (H, W)).astype(np.float32), (0, 0), .6).astype(np.int16)[..., None] for _ in range(6)]
+        # fine static dither (±1 level): kills gradient banding without feeding YouTube's encoder moving noise
+        self.grain = [np.round(rng.random((H, W, 1)) - rng.random((H, W, 1))).astype(np.int16)]
         self.bokeh = [(rng.uniform(40, W - 40), rng.uniform(300, H - 300), int(rng.uniform(50, 150)), rng.uniform(-6, 6), rng.uniform(-10, -3),
                        rng.uniform(.025, .055), self.accent if k < 2 else G4) for k in range(7)]
         self._glow = {}
@@ -246,7 +248,7 @@ class Background:
         return arr
 
     def finish(self, arr, fi):
-        out = (arr.astype(np.uint16) * self.vig >> 8).astype(np.int16) + self.grain[(fi // 2) % len(self.grain)]
+        out = (arr.astype(np.uint16) * self.vig >> 8).astype(np.int16) + self.grain[0]
         return np.clip(out, 0, 255).astype(np.uint8)
 
 # ---------------------------------------------------------------- context
@@ -513,7 +515,7 @@ WALLS = {"drywall": (.85, "Drywall", "≈ −4 dB"), "brick": (.45, "Brick", "�
 def t_wall(arr, t, d, ctx):
     """Wi-Fi wavefronts meeting a wall: drywall lets them through, concrete soaks them up, metal mirrors them back."""
     T, name, val = WALLS[d.get("material", "drywall")]; metal = d.get("material") == "metal"
-    src, rcv = (175, 780), (835, 780); wx0, wx1 = (515, 545) if metal else (492, 568)
+    src, rcv = (175, 780), (825, 780); wx0, wx1 = (CX - 15, CX + 15) if metal else (CX - 38, CX + 38)
     a, b, dy = enter(t, 0, .7, 20, 8)
     Y0, Y1 = 400, 1170; M = np.zeros((Y1 - Y0, W), np.float32)
     for k in range(9):
@@ -607,14 +609,18 @@ def draw_captions(arr, t, chunks, accent, D, size=72):
     sz = size
     while sz > 48 and tw(" ".join(w for w, _ in toks), "Medium", sz, -.01) > CAP_W: sz -= 4
     st = [enter(t, w["start"] - .06, .4, 12, 7) for w in ch]
-    words_line(arr, toks, CX, CAP_Y, "Medium", sz, -.01, INK, accent, st, shadow=.75)
+    words_line(arr, toks, OUT_CX, CAP_Y, "Medium", sz, -.01, INK, accent, st, shadow=.75)
 
 # ---------------------------------------------------------------- camera, brand, outro, frame
-def camera(arr, t, D, idx):
+def camera(arr, t, D, idx, motion=True):
+    """Slow constant camera + re-centre: the design space (centre CX) lands centred on the frame (OUT_CX),
+    scaled by FIT, so the composition is symmetric on screen and survives side-cropping on tall phones."""
     k = t / max(D, 1e-3)                                     # slow, constant: alternate push-in / pull-back
     z = 1.0 + .032 * k if idx % 2 == 0 else 1.032 - .032 * k
     dx = (12 * k - 6) * (1 if idx % 3 else -1); dy = -8 * k
-    M = np.float32([[z, 0, (1 - z) * CX + dx], [0, z, (1 - z) * 800 + dy]])
+    if not motion: z, dx, dy = 1.0, 0.0, 0.0
+    s = z * FIT
+    M = np.float32([[s, 0, OUT_CX - s * CX + dx], [0, s, (1 - s) * 800 + dy]])
     return cv2.warpAffine(arr, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
 
 # ---------------------------------------------------------------- brand: Quiet Circuit mark (geometry = branding/brandkit.py mark_B)
@@ -647,10 +653,11 @@ def draw_mark(arr, x, y, size, accent, alpha=1.0, ring=1.0, tail=1.0, pad=1.0, g
         s = size / 100; dot(arr, x + MARK_PAD[0] * s, y + MARK_PAD[1] * s, MARK_PAD_R * s, accent, alpha * pad, glow=glow * pad)
 
 def logo(arr, accent, alpha=1.0):
-    """Corner brand: small mark + QUIET CIRCUIT (discreet, inside the safe zone)."""
+    """Discreet brand, top-centre inside the safe zone (never cut by side-cropping): small mark + QUIET CIRCUIT."""
     if alpha <= 0.004: return
-    draw_mark(arr, 52, 283, 34, accent, .92 * alpha, glow=.5)
-    text(arr, "QUIET CIRCUIT", 96, 300, "SemiBold", 21, G4, .85 * alpha, "l", "c", .24)
+    ms, gap = 32, 10; total = ms * .95 + gap + tw("QUIET CIRCUIT", "SemiBold", 21, .24); x0 = OUT_CX - total / 2
+    draw_mark(arr, x0 - ms * .15, 300 - ms * .47, ms, accent, .92 * alpha, glow=.5)
+    text(arr, "QUIET CIRCUIT", x0 + ms * .95 + gap, 300, "SemiBold", 21, G4, .85 * alpha, "l", "c", .24)
 
 OUTRO = .85
 def outro_k(t, D): return clamp((t - (D - OUTRO)) / OUTRO)
@@ -665,11 +672,11 @@ def outro(arr, t, D, accent):
     bl = cv2.resize(cv2.GaussianBlur(small, (0, 0), 1 + 5 * e), (W, H), interpolation=cv2.INTER_LINEAR)
     out = cv2.addWeighted(arr, 1 - e, bl, e, 0)
     out = np.ascontiguousarray(cv2.addWeighted(out, 1 - e, np.full_like(out, BG), e, 0))
-    size = 220; x, y = CX - size * .52, 870 - size / 2
+    size = 220; x, y = OUT_CX - size * .52, 870 - size / 2
     ring = expo((k - .12) / .42); tail = smooth((k - .5) / .14); pad = smooth((k - .6) / .12)
     if ring > 0: draw_mark(out, x, y, size, accent, smooth((k - .1) / .1), ring, tail, pad, glow=.9)
     a, b, dy = enter(k * OUTRO, .62 * OUTRO, .5, 12, 8)
-    text(out, "QUIET CIRCUIT", CX, 1080 + dy, "Medium", 30, G4, a, "m", "c", .3, b)
+    text(out, "QUIET CIRCUIT", OUT_CX, 1080 + dy, "Medium", 30, G4, a, "m", "c", .3, b)
     return out
 
 def render_frame(beat, t, bg, accent, captions=True, cam=True, finish=True, fi=0):
@@ -685,7 +692,7 @@ def render_frame(beat, t, bg, accent, captions=True, cam=True, finish=True, fi=0
         fr = min(beat["frames"] - 1, int(round(t * FPS)))
         layer(arr, obj_frame(o["dir"], fr), o["cx"], o["cy"] + dy, a * o.get("alpha", 1.0), b)
     TEMPLATES[beat["visual_type"]](arr, t, d, ctx)
-    if cam: arr = camera(arr, t, beat["D"], beat["index"])
+    arr = camera(arr, t, beat["D"], beat["index"], motion=cam)
     if captions and beat["visual_type"] not in NO_CAPTIONS and not d.get("no_captions"):
         draw_captions(arr, t, beat["chunks"], acc, beat["D"])
     k = outro_k(t, beat["D"]) if beat.get("outro") else 0.0
@@ -706,6 +713,7 @@ def cover(beat, obj_rgba, bg, accent, big, small=None):
     size = headline(arr, 99.0, ctx, big, y, 170)
     top = y - (len(_lines(big)) - 1) * size * 1.08 / 2            # centre of the first headline line
     if small: label(arr, small, CX, top - size * CAP / 2 - 64, G4, 1, 32)
+    arr = camera(arr, 0, 1, 0, motion=False)
     logo(arr, acc)
     return bg.finish(arr, 0)
 

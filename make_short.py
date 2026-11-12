@@ -199,8 +199,22 @@ def prepare_icons(work):
     engine.ICON_REQ.clear(); engine.icon_mask.cache_clear(); return True
 
 # ------------------------------------------------------------------ video
-ENC = ["-c:v", "libx264", "-preset", "medium", "-crf", "16", "-maxrate", "22M", "-bufsize", "44M", "-pix_fmt", "yuv420p",
-       "-profile:v", "high", "-level", "5.1", "-g", "120", "-bf", "2"]
+COLOR = ["-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709", "-color_range", "tv"]
+ENC = ["-vf", "scale=out_color_matrix=bt709:out_range=tv:flags=lanczos,setsar=1",   # RGB -> BT.709 (what YouTube assumes for HD)
+       "-c:v", "libx264", "-preset", "medium", "-crf", "16", "-maxrate", "22M", "-bufsize", "44M", "-pix_fmt", "yuv420p",
+       "-profile:v", "high", "-level", "5.1", "-g", "120", "-bf", "2"] + COLOR
+
+def youtube_master(mp4, out):
+    """1440x2560 upload master (Lanczos upscale): YouTube serves >=1440p uploads with its better codecs (VP9/AV1),
+    which looks noticeably cleaner in the Shorts player even on 1080p screens. Kept < 95 MB."""
+    for maxrate in (18, 15, 12):
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", mp4, "-vf",
+                        "scale=1440:2560:flags=lanczos:in_color_matrix=bt709:out_color_matrix=bt709:in_range=tv:out_range=tv,setsar=1",
+                        "-c:v", "libx264", "-preset", "slow", "-crf", "12", "-maxrate", f"{maxrate}M", "-bufsize", f"{2 * maxrate}M",
+                        "-pix_fmt", "yuv420p", "-profile:v", "high", "-level", "5.1", "-g", "120"] + COLOR +
+                       ["-c:a", "copy", "-movflags", "+faststart", out], check=True)
+        if os.path.getsize(out) / 1e6 < MAX_MB: break
+    return out
 
 def _render_scene(job):
     import engine
@@ -361,6 +375,8 @@ def make(topic, review_only=False, mark=True, cover_only=False):
     v = next(s for s in info["streams"] if s["codec_name"] == "h264")
     log(f"OK {mp4}: {v['width']}x{v['height']} {v['r_frame_rate']} {dur:.1f}s {size:.1f} MB ({int(info['format']['bit_rate']) / 1e6:.1f} Mb/s)")
     if size > MAX_MB: log("AVISO: pasa de 95 MB")
+    up = youtube_master(mp4, os.path.join(out, "short_youtube_1440p.mp4"))
+    log(f"versión para subir a YouTube: {up} ({os.path.getsize(up) / 1e6:.1f} MB)")
     log("6 fotogramas clave del mp4:", *keyframes(mp4, beats, work))
     if mark: mark_done(script.get("topic", topic))
     return out
