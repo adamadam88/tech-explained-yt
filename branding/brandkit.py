@@ -165,6 +165,46 @@ def rasterize(jobs, scale=1):
         if j["scale"] > 1:
             im = Image.open(j["out"]); im.resize((j["w"], j["h"]), Image.LANCZOS).save(j["out"])
 
+# ---------------------------------------------------------------- banding-free light (float math + dither)
+def _hex(c): c = c.lstrip("#"); return [int(c[i:i + 2], 16) / 255 for i in (0, 2, 4)]
+
+def light_layer(W, H, lights):
+    """Background + glows computed analytically in float32 (no 8-bit gradient banding).
+    lights: [{cx, cy, rx, ry, stops: [(offset, '#rrggbb', opacity)], blend: 'normal'|'screen'}] in output pixels."""
+    import numpy as np
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32) + .5
+    out = np.zeros((H, W, 3), np.float32)
+    for L in lights:
+        d = np.sqrt(((xx - L["cx"]) / L["rx"]) ** 2 + ((yy - L["cy"]) / L["ry"]) ** 2)
+        offs = [o for o, _, _ in L["stops"]]
+        a = np.interp(d, offs, [op for _, _, op in L["stops"]]).astype(np.float32)[..., None]
+        col = np.stack([np.interp(d, offs, [_hex(c)[k] for _, c, _ in L["stops"]]) for k in range(3)], -1).astype(np.float32)
+        if L.get("blend") == "screen": out = out + ((1 - (1 - out) * (1 - col)) - out) * a
+        else: out = out * (1 - a) + col * a
+    return out
+
+def render_layered(svg_crisp, lights, W, H, out_png, scale=3, seed=0):
+    """Crisp shapes (Chromium, supersampled, transparent) over the float light layer, then TPDF dither to 8 bits."""
+    import numpy as np, cv2
+    from PIL import Image
+    tmp = out_png + ".crisp.png"
+    p = os.path.join(HERE, ".jobs.json"); json.dump([{"svg": svg_crisp, "out": tmp, "w": W, "h": H, "scale": scale}], open(p, "w"))
+    subprocess.run(["node", os.path.join(HERE, "rasterize.cjs"), p], check=True); os.remove(p)
+    c = np.asarray(Image.open(tmp).convert("RGBA"), np.float32) / 255; os.remove(tmp)
+    pm = np.concatenate([c[..., :3] * c[..., 3:], c[..., 3:]], -1)                    # premultiply before resampling
+    pm = cv2.resize(pm, (W, H), interpolation=cv2.INTER_AREA)
+    base = light_layer(W, H, lights)
+    img = base * (1 - pm[..., 3:]) + pm[..., :3]
+    rng = np.random.default_rng(seed)
+    noise = (rng.random((H, W, 1), np.float32) - rng.random((H, W, 1), np.float32))   # triangular PDF, +-1 LSB
+    Image.fromarray(np.clip(np.round(img * 255 + noise), 0, 255).astype(np.uint8)).save(out_png)
+
+HALO = [(0, "#FFE4B8", .95), (.18, "#FFD196", .45), (.5, "#FFB46A", .12), (1, "#FFB46A", 0)]
+def bloom_lights(nx, ny, unit):
+    """The node's two screen-blended blooms (same as mark_lit's), for a mark whose 100-unit box is `unit*100` px."""
+    return [dict(cx=nx, cy=ny, rx=34 * unit, ry=34 * unit, stops=HALO, blend="screen"),
+            dict(cx=nx, cy=ny, rx=13 * unit, ry=13 * unit, stops=HALO, blend="screen")]
+
 def write(path, content): os.makedirs(os.path.dirname(path), exist_ok=True); open(path, "w").write(content); return path
 
 # ---------------------------------------------------------------- explore: options + comparison boards
@@ -229,17 +269,15 @@ def _bbox_offset(s):
     """Offset that centres the mark's visible bbox (x 15..95.2, y 13.4..80.4 in mark units) for a box of size s."""
     return (50 - 55.1) / 100 * s, (50 - 46.9) / 100 * s
 
-def profile():
+def profile(out_png):
     S = 800; s = 490; ox, oy = _bbox_offset(s); x = (S - s) / 2 + ox - 6; y = (S - s) / 2 + oy
     n = (x + .89 * s, y + .74 * s)
-    body = (f'<defs><radialGradient id="pbg" cx="46%" cy="44%" r="72%"><stop offset="0" stop-color="#1C1C1C"/>'
-            f'<stop offset=".55" stop-color="#0E0E0E"/><stop offset="1" stop-color="#060606"/></radialGradient>'
-            f'<radialGradient id="pspill" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFC98A" stop-opacity=".22"/>'
-            f'<stop offset=".4" stop-color="#FFB870" stop-opacity=".06"/><stop offset="1" stop-color="#FFB870" stop-opacity="0"/></radialGradient></defs>'
-            f'<rect width="{S}" height="{S}" fill="url(#pbg)"/>'
-            f'<circle cx="{n[0]:.1f}" cy="{n[1]:.1f}" r="330" fill="url(#pspill)" style="mix-blend-mode:screen"/>'
-            + place(mark_lit("pm", 7.6, 1.0), x, y, s))
-    return svg(S, S, body)
+    lights = [dict(cx=.46 * S, cy=.44 * S, rx=.72 * S, ry=.72 * S, stops=[(0, "#1C1C1C", 1), (.55, "#0E0E0E", 1), (1, "#060606", 1), (9, "#060606", 1)]),
+              dict(cx=n[0], cy=n[1], rx=330, ry=330, stops=[(0, "#FFC98A", .22), (.4, "#FFB870", .06), (1, "#FFB870", 0)], blend="screen")]
+    lights += bloom_lights(*n, s / 100)
+    crisp = svg(S, S, place(mark_lit("pm", 7.6, 0), x, y, s))
+    write(os.path.join(HERE, "profile_800.svg"), svg(S, S, f'<rect width="{S}" height="{S}" fill="#0E0E0E"/>' + place(mark_lit("pm", 7.6, 1.0), x, y, s)))
+    render_layered(crisp, lights, S, S, out_png)
 
 def wordmark_lit(size, x, y, quiet="#B4B4AE", ink="#F5F5F2"):
     d1, w1 = text_path("Quiet", "Light", size, 0, 0, -.02); sp = size * .24
@@ -247,11 +285,13 @@ def wordmark_lit(size, x, y, quiet="#B4B4AE", ink="#F5F5F2"):
     return (f'<g transform="translate({x:.2f} {y:.2f})"><path d="{d1}" fill="{quiet}"/>'
             f'<path transform="translate({w1 + sp:.2f} 0)" d="{d2}" fill="{ink}"/></g>'), w1 + sp + w2
 
+_BLIGHTS = []
 def _lit_node(x, y, r=7, uid="n", k=1.0):
-    return (f'<g style="mix-blend-mode:screen" opacity="{k:.2f}"><circle cx="{x:.1f}" cy="{y:.1f}" r="{r * 7}" fill="url(#bhalo)"/></g>'
-            f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r}" fill="url(#bcore)"/>')
+    _BLIGHTS.append(dict(cx=x, cy=y, rx=r * 7, ry=r * 7, stops=[(0, "#FFE4B8", .9), (.18, "#FFD196", .35), (.5, "#FFB46A", .08), (1, "#FFB46A", 0)], blend="screen"))
+    return f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r}" fill="url(#bcore)"/>'
 
-def banner():
+def banner(out_png=None):
+    _BLIGHTS.clear()
     W, H = 2560, 1440; sx0, sy0 = (W - 1546) / 2, (H - 423) / 2; sx1, sy1 = sx0 + 1546, sy0 + 423
     mpx, size = 244, 150
     wm, ww = wordmark_lit(size, 0, 0); gap = mpx * .2
@@ -291,13 +331,16 @@ def banner():
             seg = f'<rect x="{xa:.0f}" y="{y + jy - 1.6}" width="{xb - xa:.0f}" height="3.2" rx="1.6" fill="url(#{gid})"/>'
             tr.append(f'<g style="mix-blend-mode:screen"><g filter="url(#bblur)" opacity=".8">{seg}</g>{seg}</g>')
     n = (x0 + .89 * mpx, mark_y + .74 * mpx)
-    body = (f'<rect width="{W}" height="{H}" fill="url(#bbg)"/>'
-            f'<rect width="{W}" height="{H}" fill="url(#bdots)" mask="url(#bmask)"/>' + "".join(tr)
-            + f'<ellipse cx="{n[0]:.0f}" cy="{n[1]:.0f}" rx="760" ry="420" fill="url(#bspill)" style="mix-blend-mode:screen"/>'
-            + place(mark_lit("bm", 7.6, 1.0), x0, mark_y, mpx)
-            + wm.replace('<g transform="translate(0.00 0.00)">', f'<g transform="translate({x0 + vis_r + gap:.2f} {cy + capc:.2f})">')
-            + f'<path d="{tag}" fill="#85857F"/>')
-    return svg(W, H, body, defs_)
+    crisp = (f'<rect width="{W}" height="{H}" fill="url(#bdots)" mask="url(#bmask)"/>' + "".join(tr)
+             + place(mark_lit("bm", 7.6, 0), x0, mark_y, mpx)
+             + wm.replace('<g transform="translate(0.00 0.00)">', f'<g transform="translate({x0 + vis_r + gap:.2f} {cy + capc:.2f})">')
+             + f'<path d="{tag}" fill="#85857F"/>')
+    lights = [dict(cx=W * .5, cy=H * .48, rx=.62 * W, ry=.62 * H, stops=[(0, "#171717", 1), (.55, "#0C0C0C", 1), (1, "#050505", 1), (9, "#050505", 1)]),
+              dict(cx=n[0], cy=n[1], rx=760, ry=420, stops=[(0, "#FFC98A", .16), (.5, "#FFB870", .04), (1, "#FFB870", 0)], blend="screen")]
+    lights += _BLIGHTS + bloom_lights(*n, mpx / 100)
+    full = svg(W, H, f'<rect width="{W}" height="{H}" fill="url(#bbg)"/>' + crisp.replace('place(', ''), defs_)
+    if out_png: render_layered(svg(W, H, crisp, defs_), lights, W, H, out_png, seed=1)
+    return full
 
 def banner_preview(png, out):
     from PIL import Image, ImageDraw, ImageFont
@@ -342,10 +385,8 @@ def final():
     sv = svg(Wd, 120, f'<g transform="translate(40 {60 + cap_height("Medium", 60) / 2})">{wm}</g>'); write(os.path.join(L, "quietcircuit-wordmark-caps.svg"), sv)
     jobs.append({"svg": sv, "out": os.path.join(L, "quietcircuit-wordmark-caps.png"), "w": Wd, "h": 120})
     # profile picture, banner, watermark
-    pf = profile(); write(os.path.join(out, "profile_800.svg"), pf)
-    jobs.append({"svg": pf, "out": os.path.join(out, "profile_800.png"), "w": 800, "h": 800})
-    bn = banner(); write(os.path.join(out, "banner_2560x1440.svg"), bn)
-    jobs.append({"svg": bn, "out": os.path.join(out, "banner_2560x1440.png"), "w": 2560, "h": 1440})
+    profile(os.path.join(out, "profile_800.png"))                      # layered: float light + dither (no banding)
+    write(os.path.join(out, "banner_2560x1440.svg"), banner(os.path.join(out, "banner_2560x1440.png")))
     wmk = watermark(); write(os.path.join(out, "watermark_150.svg"), wmk)
     jobs.append({"svg": wmk, "out": os.path.join(out, "watermark_150.png"), "w": 150, "h": 150})
     rasterize(jobs, scale=3)
