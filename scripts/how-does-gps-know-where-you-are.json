@@ -1,0 +1,1045 @@
+{
+ "topic": "How does GPS know where you are?",
+ "voice": "af_heart",
+ "speed": 1.0,
+ "title": "Your Phone Has No Idea Where It Is. Here's How GPS Finds You Anyway",
+ "thumbnail": {
+  "words": [
+   "EINSTEIN",
+   "FINDS YOU"
+  ],
+  "theme": "navy",
+  "visual": "globe"
+ },
+ "next_video": "Why do phone batteries get worse over time?",
+ "description_intro": "Your phone has no idea where it is, yet it can find you to within about five meters almost anywhere on Earth. Here's how GPS really works: atomic clocks in orbit, the speed of light, four-satellite geometry, Einstein's relativity, and the 1983 tragedy that opened GPS to everyone.",
+ "tags": [
+  "gps",
+  "how gps works",
+  "global positioning system",
+  "gps explained",
+  "relativity",
+  "einstein",
+  "atomic clock",
+  "satellites",
+  "trilateration",
+  "selective availability",
+  "korean air 007",
+  "assisted gps",
+  "galileo",
+  "glonass",
+  "beidou",
+  "smartphone",
+  "tech explained",
+  "how things work",
+  "science",
+  "physics"
+ ],
+ "sources": [
+  {
+   "label": "GPS.gov – Space Segment (constellation, orbits, 31 operational satellites)",
+   "url": "https://www.gps.gov/systems/gps/space"
+  },
+  {
+   "label": "GPS.gov – GPS Accuracy (smartphones ~4.9 m under open sky)",
+   "url": "https://www.gps.gov/systems/gps/performance/accuracy/"
+  },
+  {
+   "label": "Neil Ashby – Relativity in the Global Positioning System, Living Reviews in Relativity (2003)",
+   "url": "https://link.springer.com/article/10.12942/lrr-2003-1"
+  },
+  {
+   "label": "GPS World – Inside the Box: GPS and Relativity (10.22999999543 MHz factory offset)",
+   "url": "https://www.gpsworld.com/inside-the-box-gps-and-relativity/"
+  },
+  {
+   "label": "GPS World – The Origins of GPS (Sputnik, Guier & Weiffenbach, Transit)",
+   "url": "https://www.gpsworld.com/origins-gps-part-1/"
+  },
+  {
+   "label": "U.S. Air Force – GPS: A Generation of Service (first launch 1978, FOC 1995)",
+   "url": "https://www.af.mil/News/Article-Display/Article/601748/gps-a-generation-of-service-to-the-world"
+  },
+  {
+   "label": "Nextgov – How a 1983 Plane Crash Helped Speed Up Civilian Use of GPS",
+   "url": "https://nextgov.com/digital-government/2014/11/how-1983-plane-crash-helped-speed-civilian-use-gps/98000"
+  },
+  {
+   "label": "Smithsonian – GPS Accuracy With and Without Selective Availability",
+   "url": "https://timeandnavigation.si.edu/multimedia-asset/gps-accuracy-with-and-without-selective-availability"
+  },
+  {
+   "label": "GPS.gov – Selective Availability",
+   "url": "https://www.gps.gov/systems/gps/modernization/sa/data"
+  },
+  {
+   "label": "Penn State GEOG 862 – The Almanac, Time to First Fix (50 bps, 12.5 min)",
+   "url": "https://courses.ems.psu.edu/geog862/node/1739"
+  },
+  {
+   "label": "Analog Devices – GPS receiver design note (signal below thermal noise)",
+   "url": "https://www.analog.com/en/resources/design-notes/designing-a-lowcost-lowcomponentcount-gps-receiver.html"
+  },
+  {
+   "label": "GPS.gov – Timing applications",
+   "url": "https://www.gps.gov/applications/timing/"
+  }
+ ],
+ "short": [
+  0,
+  17,
+  18,
+  19
+ ],
+ "scenes": [
+  {
+   "chapter": "The trick",
+   "theme": "navy",
+   "transition": "zoom",
+   "narration": "Your phone has no idea where it is. Not a clue. And yet, it can find you to within about five meters, almost anywhere on Earth.",
+   "visual_type": "hook_title",
+   "data": {
+    "kicker": "TECH, EXPLAINED",
+    "lines": [
+     {
+      "text": "Your phone has",
+      "cue": "Your"
+     },
+     {
+      "text": "NO IDEA",
+      "cue": "idea",
+      "accent": true
+     },
+     {
+      "text": "where it is.",
+      "cue": "where"
+     }
+    ],
+    "stamp": {
+     "text": "Yet it finds you within ~5 m",
+     "cue": "find"
+    }
+   }
+  },
+  {
+   "theme": "navy",
+   "transition": "wipe",
+   "narration": "The secret is hidden twenty thousand kilometers above your head. It involves clocks in space, the speed of light, and a correction that only works because Einstein was right.",
+   "visual_type": "globe",
+   "data": {
+    "satellites": true,
+    "labels": [
+     {
+      "text": "20,200 km up",
+      "cue": "twenty"
+     },
+     {
+      "text": "Atomic clocks",
+      "cue": "clocks"
+     },
+     {
+      "text": "Speed of light",
+      "cue": "light"
+     },
+     {
+      "text": "Einstein's correction",
+      "cue": "Einstein"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "plum",
+   "transition": "flash",
+   "narration": "And the strangest part isn't even the satellites. It's that a tragedy in 1983 is the reason you're allowed to use any of this. We'll get there.",
+   "visual_type": "question",
+   "data": {
+    "kicker": "OPEN QUESTION",
+    "text": "Why did a 1983 tragedy give you GPS?",
+    "cue": "tragedy",
+    "sub": {
+     "text": "Revealed later in this video",
+     "cue": "allowed"
+    }
+   }
+  },
+  {
+   "chapter": "Clocks in the sky",
+   "theme": "navy",
+   "transition": "slide",
+   "narration": "Let's start up there. Right now, about 31 GPS satellites are circling the Earth. Each one flies around 20,200 kilometers up, and loops the planet twice a day.",
+   "visual_type": "big_number",
+   "data": {
+    "value": 31,
+    "prefix": "~",
+    "label": "active GPS satellites",
+    "cue": "31",
+    "side": "satellite",
+    "subs": [
+     {
+      "text": "circling Earth right now",
+      "cue": "circling"
+     },
+     {
+      "text": "20,200 km above Earth",
+      "cue": "20,200"
+     },
+     {
+      "text": "2 orbits every day",
+      "cue": "twice"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "navy",
+   "transition": "zoom",
+   "narration": "They're spread across six orbital planes, tilted at 55 degrees. That layout is deliberate. From virtually anywhere on the planet, at least four of them are always above the horizon.",
+   "visual_type": "globe",
+   "data": {
+    "satellites": true,
+    "planes": 6,
+    "pin": {
+     "lat": 40.4,
+     "lon": -3.7,
+     "cue": "anywhere"
+    },
+    "rays": {
+     "cue": "four"
+    },
+    "labels": [
+     {
+      "text": "6 orbital planes",
+      "cue": "six"
+     },
+     {
+      "text": "Tilted 55°",
+      "cue": "55"
+     },
+     {
+      "text": "≥ 4 always in view",
+      "cue": "four"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "teal",
+   "transition": "wipe",
+   "narration": "And they are fast. Each satellite moves at nearly 14,000 kilometers per hour. That's about fifteen times faster than a passenger jet. Remember that speed. It matters later.",
+   "visual_type": "versus",
+   "data": {
+    "left": {
+     "title": "Passenger jet",
+     "value": "~900",
+     "unit": "km/h",
+     "cue": "passenger",
+     "bar": 0.065
+    },
+    "right": {
+     "title": "GPS satellite",
+     "value": "~13,900",
+     "unit": "km/h",
+     "cue": "14,000",
+     "bar": 1.0
+    },
+    "badge": {
+     "text": "15× faster",
+     "cue": "fifteen"
+    },
+    "footer": {
+     "text": "Remember this speed…",
+     "cue": "Remember"
+    }
+   }
+  },
+  {
+   "chapter": "What satellites say",
+   "theme": "navy",
+   "transition": "slide",
+   "narration": "So what do they actually do? Surprisingly little. Each satellite just keeps broadcasting two things, over and over. Where it is, and exactly what time it is.",
+   "visual_type": "broadcast",
+   "data": {
+    "title": "SATELLITE G-07 · LIVE BROADCAST",
+    "lines": [
+     {
+      "text": "> I am satellite G-07",
+      "cue": "broadcasting"
+     },
+     {
+      "text": "> My orbit: x, y, z …",
+      "cue": "Where",
+      "color": "accent"
+     },
+     {
+      "text": "> Time: 12:00:07.000000003",
+      "cue": "exactly",
+      "color": "accent2",
+      "ticking": true
+     }
+    ],
+    "box_cue": "actually"
+   }
+  },
+  {
+   "theme": "navy",
+   "transition": "zoom",
+   "narration": "That time comes from atomic clocks on board. And the whole system rests on one simple idea. If you know when a message left, and when it arrived, you know how far it traveled.",
+   "visual_type": "flow",
+   "data": {
+    "steps": [
+     {
+      "text": "Message leaves",
+      "sub": "sent at t₀",
+      "cue": "left"
+     },
+     {
+      "text": "Message arrives",
+      "sub": "received at t₁",
+      "cue": "arrived"
+     },
+     {
+      "text": "Distance",
+      "sub": "light speed × (t₁ − t₀)",
+      "cue": "far"
+     }
+    ],
+    "header": {
+     "text": "Atomic clocks on board",
+     "cue": "atomic"
+    },
+    "header2": {
+     "text": "One simple idea:",
+     "cue": "idea"
+    }
+   }
+  },
+  {
+   "theme": "amber",
+   "transition": "flash",
+   "narration": "The signal moves at the speed of light. From directly overhead, the trip takes about 67 thousandths of a second. That's faster than you can blink.",
+   "visual_type": "big_number",
+   "data": {
+    "value": 67,
+    "suffix": " ms",
+    "label": "from orbit to your phone",
+    "cue": "67",
+    "side": "signal",
+    "subs": [
+     {
+      "text": "at the speed of light",
+      "cue": "light"
+     },
+     {
+      "text": "faster than a blink",
+      "cue": "blink"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "crimson",
+   "transition": "wipe",
+   "narration": "But here's the problem. Light covers 300 meters in a single microsecond. So if a clock is off by just one millionth of a second, your position is off by about three football fields.",
+   "visual_type": "versus",
+   "data": {
+    "left": {
+     "title": "Clock error",
+     "value": "1 µs",
+     "unit": "one millionth of a second",
+     "cue": "clock"
+    },
+    "right": {
+     "title": "Position error",
+     "value": "300 m",
+     "unit": "≈ 3 football fields",
+     "cue": "football"
+    },
+    "badge": {
+     "text": "=",
+     "cue": "position"
+    },
+    "header": {
+     "text": "Light travels 300 m per microsecond",
+     "cue": "300"
+    }
+   }
+  },
+  {
+   "chapter": "Drawing circles",
+   "theme": "navy",
+   "transition": "slide",
+   "narration": "Now let's find you. Here's the flat version. One satellite tells your phone, you are exactly this far from me. That puts you somewhere on a circle.",
+   "visual_type": "circles",
+   "data": {
+    "stages": [
+     {
+      "cue": "One",
+      "n": 1
+     }
+    ],
+    "caption_top": {
+     "text": "1 satellite → you're somewhere on this circle",
+     "cue": "somewhere"
+    }
+   }
+  },
+  {
+   "theme": "navy",
+   "transition": "cut",
+   "narration": "A second satellite adds a second circle. They cross at just two points. Add a third, and only one point fits all three. That's you.",
+   "visual_type": "circles",
+   "data": {
+    "stages": [
+     {
+      "cue": "A",
+      "n": 1
+     },
+     {
+      "cue": "second",
+      "n": 2
+     },
+     {
+      "cue": "two",
+      "n": 2,
+      "points": true
+     },
+     {
+      "cue": "third",
+      "n": 3
+     },
+     {
+      "cue": "you",
+      "n": 3,
+      "you": true
+     }
+    ],
+    "caption_top": {
+     "text": "3 circles → 1 point",
+     "cue": "only"
+    },
+    "instant_first": true
+   }
+  },
+  {
+   "theme": "teal",
+   "transition": "zoom",
+   "narration": "In real three D space, it's spheres instead of circles, but the idea is exactly the same. It's called trilateration. No angles, no compass. Just distances.",
+   "visual_type": "tiles",
+   "data": {
+    "title": {
+     "text": "TRILATERATION",
+     "cue": "called"
+    },
+    "items": [
+     {
+      "text": "Spheres",
+      "sub": "not circles, in 3D",
+      "cue": "spheres"
+     },
+     {
+      "text": "No angles",
+      "sub": "no compass needed",
+      "cue": "angles"
+     },
+     {
+      "text": "Distances",
+      "sub": "that's all it uses",
+      "cue": "distances"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "plum",
+   "transition": "flash",
+   "narration": "But wait. That math only works if your phone knows the exact time. And your phone's clock is cheap. It's nowhere near an atomic clock. So how can it time a signal to a millionth of a second?",
+   "visual_type": "versus",
+   "data": {
+    "header": {
+     "text": "The math needs the exact time",
+     "cue": "math"
+    },
+    "left": {
+     "title": "Satellites",
+     "value": "Atomic",
+     "unit": "accurate to billionths of a second",
+     "cue": "atomic"
+    },
+    "right": {
+     "title": "Your phone",
+     "value": "Cheap",
+     "unit": "an ordinary quartz clock",
+     "cue": "cheap"
+    },
+    "badge": {
+     "text": "VS",
+     "cue": "nowhere"
+    },
+    "footer": {
+     "text": "So how can it time light?",
+     "cue": "how"
+    }
+   }
+  },
+  {
+   "chapter": "Why four satellites",
+   "theme": "navy",
+   "transition": "slide",
+   "narration": "The answer is beautiful. Your phone treats time as just another unknown. Latitude, longitude, altitude, and its own clock error. Four unknowns need four measurements. That's why GPS uses four satellites, not three.",
+   "visual_type": "tiles",
+   "data": {
+    "title": {
+     "text": "Time = just another unknown",
+     "cue": "time"
+    },
+    "items": [
+     {
+      "text": "Latitude",
+      "sub": "x",
+      "cue": "Latitude"
+     },
+     {
+      "text": "Longitude",
+      "sub": "y",
+      "cue": "longitude"
+     },
+     {
+      "text": "Altitude",
+      "sub": "z",
+      "cue": "altitude"
+     },
+     {
+      "text": "Clock error",
+      "sub": "t",
+      "cue": "error",
+      "accent": true
+     }
+    ],
+    "footers": [
+     {
+      "text": "4 unknowns need 4 measurements",
+      "cue": "Four"
+     },
+     {
+      "text": "So GPS uses 4 satellites, not 3",
+      "cue": "satellites"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "teal",
+   "transition": "zoom",
+   "narration": "Solve all four at once, and you get a bonus. Your phone now knows the time to within a millionth of a second. That's why cell networks, power grids and banks lean on GPS as a clock.",
+   "visual_type": "top_list",
+   "data": {
+    "title": {
+     "text": "GPS is secretly a clock",
+     "cue": "bonus"
+    },
+    "items": [
+     {
+      "text": "Cell networks",
+      "sub": "keep towers in sync",
+      "cue": "cell"
+     },
+     {
+      "text": "Power grids",
+      "sub": "time-stamp the flow",
+      "cue": "power"
+     },
+     {
+      "text": "Banks",
+      "sub": "time-stamp transactions",
+      "cue": "banks"
+     }
+    ],
+    "badge": {
+     "text": "time to within a millionth of a second",
+     "cue": "millionth"
+    }
+   }
+  },
+  {
+   "chapter": "Einstein's correction",
+   "theme": "plum",
+   "transition": "flash",
+   "narration": "Now, the strange part I promised. Those atomic clocks in orbit don't tick at the same rate as clocks on the ground. Not because they're broken. Because time itself runs differently up there.",
+   "visual_type": "clock",
+   "data": {
+    "kicker": "EINSTEIN WAS RIGHT",
+    "lines": [
+     {
+      "text": "Clocks in orbit tick",
+      "cue": "atomic"
+     },
+     {
+      "text": "at a different rate",
+      "cue": "rate",
+      "accent": true
+     },
+     {
+      "text": "time itself runs differently",
+      "cue": "itself"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "plum",
+   "transition": "wipe",
+   "narration": "Two effects fight each other. The satellites move so fast that special relativity slows their clocks by about seven microseconds a day. But gravity is weaker up there, so general relativity speeds them up by about 45.",
+   "visual_type": "versus",
+   "data": {
+    "left": {
+     "title": "Speed (special relativity)",
+     "value": "−7 µs",
+     "unit": "per day · slower",
+     "cue": "slows"
+    },
+    "right": {
+     "title": "Weaker gravity (general)",
+     "value": "+45 µs",
+     "unit": "per day · faster",
+     "cue": "weaker"
+    },
+    "badge": {
+     "text": "VS",
+     "cue": "But"
+    },
+    "footer": {
+     "text": "Net result: clocks in orbit run fast",
+     "cue": "45"
+    },
+    "header": {
+     "text": "Two effects fight each other",
+     "cue": "fight"
+    }
+   }
+  },
+  {
+   "theme": "plum",
+   "transition": "zoom",
+   "narration": "The result? Each satellite clock runs about 38 microseconds fast, every single day. That sounds like nothing. But remember, one microsecond is 300 meters.",
+   "visual_type": "big_number",
+   "data": {
+    "value": 38,
+    "prefix": "+",
+    "suffix": " µs",
+    "label": "gained by each satellite clock, every day",
+    "cue": "38",
+    "side": "clock",
+    "subs": [
+     {
+      "text": "sounds like nothing…",
+      "cue": "nothing"
+     },
+     {
+      "text": "1 µs = 300 m",
+      "cue": "300"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "crimson",
+   "transition": "slide",
+   "narration": "Left uncorrected, the error would grow by roughly ten kilometers every day. After a week, your map would put you in a completely different city.",
+   "visual_type": "chart",
+   "data": {
+    "title": "Position error without relativity",
+    "y_label": "km",
+    "x_label": "days",
+    "cue": "uncorrected",
+    "points": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      11.4
+     ],
+     [
+      2,
+      22.8
+     ],
+     [
+      3,
+      34.2
+     ],
+     [
+      4,
+      45.6
+     ],
+     [
+      5,
+      57
+     ],
+     [
+      6,
+      68.4
+     ],
+     [
+      7,
+      79.8
+     ]
+    ],
+    "annotations": [
+     {
+      "x": 1,
+      "text": "~11 km",
+      "cue": "ten"
+     },
+     {
+      "x": 7,
+      "text": "~80 km",
+      "cue": "week"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "navy",
+   "transition": "zoom",
+   "narration": "So engineers set the satellite clocks slightly slow before launch. Instead of ticking at exactly 10.23 megahertz, they're tuned a hair lower. From the ground, they look perfect. Einstein, built into the hardware.",
+   "visual_type": "quote",
+   "data": {
+    "kicker": "FACTORY SETTING",
+    "text": "10.22999999543 MHz",
+    "mono": true,
+    "cue": "megahertz",
+    "pre": {
+     "text": "Not 10.23 MHz…",
+     "cue": "slow"
+    },
+    "source": {
+     "text": "Einstein, built into the hardware",
+     "cue": "Einstein"
+    },
+    "stamp": {
+     "text": "Looks perfect from the ground",
+     "cue": "perfect"
+    }
+   }
+  },
+  {
+   "chapter": "The 1983 tragedy",
+   "theme": "amber",
+   "transition": "flash",
+   "narration": "Now, the history. Because GPS was never meant for you. After Sputnik launched in 1957, physicists realized they could pin down a satellite's orbit just from its radio signal. Flip that around, and a satellite could tell you where you are.",
+   "visual_type": "timeline",
+   "data": {
+    "notes": [
+     {
+      "text": "GPS was never meant for you",
+      "cue": "never"
+     },
+     {
+      "text": "Physicists listen to its radio signal",
+      "cue": "realized"
+     },
+     {
+      "text": "…and work out its exact orbit",
+      "cue": "orbit"
+     },
+     {
+      "text": "Flip it: a satellite can locate YOU",
+      "cue": "Flip"
+     }
+    ],
+    "events": [
+     {
+      "year": "1957",
+      "text": "Sputnik launches",
+      "cue": "Sputnik"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "amber",
+   "transition": "cut",
+   "narration": "The U.S. Navy built a satellite system called Transit to guide its submarines. The first GPS satellite followed in 1978. But GPS was a military system, built for planes, ships and missiles.",
+   "visual_type": "timeline",
+   "data": {
+    "start_index": 0,
+    "notes": [
+     {
+      "text": "Built to guide submarines",
+      "cue": "submarines"
+     },
+     {
+      "text": "A military system",
+      "cue": "military"
+     }
+    ],
+    "events": [
+     {
+      "year": "1957",
+      "text": "Sputnik launches",
+      "cue": 0
+     },
+     {
+      "year": "1960",
+      "text": "Navy's Transit satellites",
+      "cue": "Transit"
+     },
+     {
+      "year": "1978",
+      "text": "First GPS satellite launched",
+      "cue": "1978"
+     },
+     {
+      "year": "1980s",
+      "text": "Planes, ships & missiles only",
+      "cue": "planes"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "crimson",
+   "transition": "flash",
+   "narration": "Then, in September 1983, Korean Air Lines Flight 007 strayed off course into Soviet airspace, and was shot down. All 269 people on board were killed.",
+   "visual_type": "quote",
+   "data": {
+    "kicker": "SEPTEMBER 1, 1983",
+    "text": "Flight 007 strays off course and is shot down",
+    "cue": "Korean",
+    "source": {
+     "text": "269 people on board killed",
+     "cue": "269"
+    },
+    "stamp": {
+     "text": "Strayed into Soviet airspace",
+     "cue": "Soviet"
+    }
+   }
+  },
+  {
+   "theme": "navy",
+   "transition": "wipe",
+   "narration": "About two weeks later, President Reagan announced that GPS would be opened up to civilian aircraft and the world, once it was ready. That's the tragedy that gave you the blue dot.",
+   "visual_type": "quote",
+   "data": {
+    "kicker": "SEPTEMBER 16, 1983",
+    "text": "GPS will be made available for civilian use",
+    "cue": "Reagan",
+    "source": {
+     "text": "President Ronald Reagan",
+     "cue": "civilian"
+    },
+    "stamp": {
+     "text": "The tragedy behind the blue dot",
+     "cue": "tragedy"
+    },
+    "pre": {
+     "text": "Two weeks later…",
+     "cue": "weeks"
+    }
+   }
+  },
+  {
+   "theme": "teal",
+   "transition": "slide",
+   "narration": "But there was a catch. Civilian signals were deliberately degraded. It was called Selective Availability. Then, on May 2nd, 2000, it was switched off. Overnight, typical accuracy jumped from about 45 meters to about 6.",
+   "visual_type": "versus",
+   "data": {
+    "left": {
+     "title": "Selective Availability ON",
+     "value": "~45 m",
+     "unit": "typical accuracy",
+     "cue": "degraded",
+     "bar": 1.0
+    },
+    "right": {
+     "title": "Switched OFF · May 2, 2000",
+     "value": "~6 m",
+     "unit": "typical accuracy",
+     "cue": "Overnight",
+     "bar": 0.13
+    },
+    "badge": {
+     "text": "OFF",
+     "cue": "2000"
+    },
+    "header": {
+     "text": "Selective Availability: civilian GPS deliberately degraded",
+     "cue": "called"
+    },
+    "footer": {
+     "text": "About 7× more precise, overnight",
+     "cue": "6"
+    }
+   }
+  },
+  {
+   "chapter": "Why your phone is fast",
+   "theme": "navy",
+   "transition": "zoom",
+   "narration": "Here's something most people don't know. GPS satellites send their data painfully slowly. Just 50 bits per second. Downloading the full almanac of satellite orbits takes twelve and a half minutes.",
+   "visual_type": "big_number",
+   "data": {
+    "value": 50,
+    "suffix": " bit/s",
+    "label": "GPS data rate",
+    "cue": "data",
+    "side": "progress",
+    "subs": [
+     {
+      "text": "~1,000× slower than a dial-up modem",
+      "cue": "second"
+     },
+     {
+      "text": "full almanac: 12.5 minutes",
+      "cue": "twelve"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "teal",
+   "transition": "wipe",
+   "narration": "So your phone cheats. It grabs that same data over your mobile network or Wi-Fi, almost instantly. That's called assisted GPS, and it's why your location appears in seconds, not minutes.",
+   "visual_type": "flow",
+   "data": {
+    "header": {
+     "text": "Assisted GPS",
+     "cue": "assisted"
+    },
+    "steps": [
+     {
+      "text": "Mobile network",
+      "sub": "or Wi-Fi",
+      "cue": "mobile"
+     },
+     {
+      "text": "Orbit data",
+      "sub": "almost instantly",
+      "cue": "instantly"
+     },
+     {
+      "text": "Location fix",
+      "sub": "seconds, not minutes",
+      "cue": "seconds"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "plum",
+   "transition": "zoom",
+   "narration": "The signal is also incredibly faint. By the time it reaches you, it's weaker than the background radio noise around it. Your phone digs it out using codes it already knows, like picking out a familiar voice in a loud crowd.",
+   "visual_type": "noise",
+   "data": {
+    "title": {
+     "text": "Buried below the noise",
+     "cue": "weaker"
+    },
+    "signal_cue": "faint",
+    "dig_cue": "digs",
+    "label": {
+     "text": "≈ −130 dBm",
+     "cue": "background"
+    },
+    "label2": {
+     "text": "Like a familiar voice in a loud crowd",
+     "cue": "familiar"
+    }
+   }
+  },
+  {
+   "theme": "navy",
+   "transition": "slide",
+   "narration": "And your phone doesn't only use GPS. Most modern phones also listen to Europe's Galileo, Russia's GLONASS and China's BeiDou. More satellites in view means a faster, sharper fix, especially between tall buildings.",
+   "visual_type": "top_list",
+   "data": {
+    "title": {
+     "text": "Not just GPS",
+     "cue": "only"
+    },
+    "items": [
+     {
+      "text": "GPS",
+      "sub": "United States",
+      "cue": "GPS"
+     },
+     {
+      "text": "Galileo",
+      "sub": "European Union",
+      "cue": "Galileo"
+     },
+     {
+      "text": "GLONASS",
+      "sub": "Russia",
+      "cue": "GLONASS"
+     },
+     {
+      "text": "BeiDou",
+      "sub": "China",
+      "cue": "BeiDou"
+     }
+    ],
+    "footer": {
+     "text": "More satellites → faster, sharper fix",
+     "cue": "means"
+    },
+    "badge": {
+     "text": "Matters most between tall buildings",
+     "cue": "especially"
+    }
+   }
+  },
+  {
+   "chapter": "Recap",
+   "theme": "teal",
+   "transition": "flash",
+   "narration": "So here's the whole trick. Satellites shout the time. Your phone measures how late each message arrives. Four of them pin down your position and your clock. And Einstein keeps the whole thing honest.",
+   "visual_type": "flow",
+   "data": {
+    "steps": [
+     {
+      "text": "Shout the time",
+      "sub": "satellites",
+      "cue": "trick"
+     },
+     {
+      "text": "Measure delay",
+      "sub": "your phone",
+      "cue": "late"
+     },
+     {
+      "text": "Solve with 4",
+      "sub": "position + clock",
+      "cue": "Four"
+     },
+     {
+      "text": "Fix with Einstein",
+      "sub": "+38 µs/day",
+      "cue": "Einstein"
+     }
+    ]
+   }
+  },
+  {
+   "theme": "navy",
+   "transition": "zoom",
+   "narration": "Next time that blue dot finds you in a strange city, remember, that's relativity at work. And if you've ever wondered why your phone's battery gets worse every year, that's the video to watch next.",
+   "visual_type": "outro",
+   "data": {
+    "text": "That blue dot is relativity at work.",
+    "cue": "remember",
+    "next": {
+     "text": "Why do phone batteries get worse over time?",
+     "cue": "wondered"
+    },
+    "cta": {
+     "text": "▶ UP NEXT",
+     "cue": "video"
+    }
+   }
+  }
+ ]
+}

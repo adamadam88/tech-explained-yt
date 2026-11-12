@@ -1,0 +1,8 @@
+kokoro-onnx
+soundfile
+faster-whisper
+opencv-python-headless
+pillow
+numpy
+scipy
+global-land-mask

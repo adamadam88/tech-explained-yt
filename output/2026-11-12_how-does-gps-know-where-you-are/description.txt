@@ -1,0 +1,33 @@
+Your phone has no idea where it is, yet it can find you to within about five meters almost anywhere on Earth. Here's how GPS really works: atomic clocks in orbit, the speed of light, four-satellite geometry, Einstein's relativity, and the 1983 tragedy that opened GPS to everyone.
+
+CHAPTERS
+0:00 The trick
+0:29 Clocks in the sky
+1:06 What satellites say
+1:49 Drawing circles
+2:31 Why four satellites
+2:59 Einstein's correction
+4:02 The 1983 tragedy
+5:15 Why your phone is fast
+6:11 Recap
+
+SOURCES
+• GPS.gov – Space Segment (constellation, orbits, 31 operational satellites): https://www.gps.gov/systems/gps/space
+• GPS.gov – GPS Accuracy (smartphones ~4.9 m under open sky): https://www.gps.gov/systems/gps/performance/accuracy/
+• Neil Ashby – Relativity in the Global Positioning System, Living Reviews in Relativity (2003): https://link.springer.com/article/10.12942/lrr-2003-1
+• GPS World – Inside the Box: GPS and Relativity (10.22999999543 MHz factory offset): https://www.gpsworld.com/inside-the-box-gps-and-relativity/
+• GPS World – The Origins of GPS (Sputnik, Guier & Weiffenbach, Transit): https://www.gpsworld.com/origins-gps-part-1/
+• U.S. Air Force – GPS: A Generation of Service (first launch 1978, FOC 1995): https://www.af.mil/News/Article-Display/Article/601748/gps-a-generation-of-service-to-the-world
+• Nextgov – How a 1983 Plane Crash Helped Speed Up Civilian Use of GPS: https://nextgov.com/digital-government/2014/11/how-1983-plane-crash-helped-speed-civilian-use-gps/98000
+• Smithsonian – GPS Accuracy With and Without Selective Availability: https://timeandnavigation.si.edu/multimedia-asset/gps-accuracy-with-and-without-selective-availability
+• GPS.gov – Selective Availability: https://www.gps.gov/systems/gps/modernization/sa/data
+• Penn State GEOG 862 – The Almanac, Time to First Fix (50 bps, 12.5 min): https://courses.ems.psu.edu/geog862/node/1739
+• Analog Devices – GPS receiver design note (signal below thermal noise): https://www.analog.com/en/resources/design-notes/designing-a-lowcost-lowcomponentcount-gps-receiver.html
+• GPS.gov – Timing applications: https://www.gps.gov/applications/timing/
+
+Watch next: Why do phone batteries get worse over time?
+
+Music and sound effects: original, generated for this channel (no copyright).
+Narration: synthetic voice (Kokoro TTS). Graphics are illustrative animations, not real footage.
+
+#Gps #HowGpsWorks #GlobalPositioningSystem

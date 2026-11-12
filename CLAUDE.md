@@ -32,6 +32,16 @@ Todo gratis: nada de APIs de pago.
 - Antes de entregar, mira fotogramas clave (lee los JPG) y comprueba que no haya textos cortados, solapados o ilegibles.
 - Adam revisa cada vídeo antes de subirlo.
 
-## Estado actual
-- `render.py`: motor de muestra (vídeo GPS de 42 s sin voz) → base para las plantillas.
-- Pendiente: todo el pipeline anterior. Empieza instalando dependencias (`ffmpeg`, Python 3.10+), luego voz, luego plantillas, y genera un primer vídeo completo de prueba.
+## Estado actual (sistema montado)
+- `make_video.py`: pipeline completo (Kokoro → faster-whisper → render por escenas en paralelo → mezcla de audio → montaje → miniatura, metadatos y short). `--stills` genera solo fotogramas de QA y hojas de contactos en `work/<slug>/stills/sheet_XX.jpg`, e imprime avisos de ritmo (huecos > 4,5 s sin elemento nuevo).
+- `render.py`: motor visual con 16 plantillas (`hook_title, globe, question, big_number, versus, broadcast, flow, circles, tiles, top_list, quote, timeline, chart, clock, noise, outro`), 5 temas de color (`navy, plum, teal, amber, crimson`), Ken Burns, transiciones (`zoom, wipe, slide, flash, cut`), subtítulos palabra a palabra, barra de progreso y etiqueta de capítulo.
+- `audio.py`: música original generada (o una pista de `assets/music/` si existe), whoosh/pop/click/impact sintetizados, ducking −18 dB bajo la voz, loudnorm −14 LUFS.
+- `scripts/<slug>.json`: el guion de cada vídeo (lo escribe Claude Code). Cada elemento visual se sincroniza con `"cue": "<palabra de la narración>"`.
+- `samples/gps_sample_render.py`: la muestra original.
+- Modelos en `models/` (no se suben a git; `make_video.py` los descarga solo). El entorno de la nube necesita acceso a `huggingface.co` y `us.aws.cdn.hf.co` para el modelo de whisper.
+
+## Cómo hacer el siguiente vídeo
+1. Claude investiga y verifica el tema y escribe `scripts/<slug>.json` (variar voz, temas, plantillas, transiciones y estructura respecto a vídeos anteriores).
+2. `python make_video.py --stills` → revisar las hojas de contactos y corregir.
+3. `python make_video.py "<tema>"` → `output/<fecha>_<slug>/`. Vídeo < 95 MB (el bitrate se ajusta solo).
+4. Commit y push de `output/`.
