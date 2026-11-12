@@ -293,13 +293,23 @@ def probe(path):
                         "-of", "json", path], capture_output=True, text=True, check=True)
     return json.loads(r.stdout)
 
+def write_cover(script, beats, accent, seed, out):
+    """Thumbnail with the fixed Quiet Circuit cover layout (engine.cover)."""
+    import engine
+    from PIL import Image
+    cv_ = script.get("cover", {}); cb = beats[cv_.get("beat", next((b["index"] for b in beats if b["objects"]), 0))]
+    obj = engine.obj_frame(cb["objects"][0]["dir"], cb["frames"] // 2) if cb["objects"] else None
+    first = script["beats"][0]["data"].get("shots", [{}])[0]
+    Image.fromarray(engine.cover(cb, obj, engine.Background(accent, seed), accent, cv_.get("big", first.get("big", script["title"])),
+                                 cv_.get("small", first.get("small")))).save(os.path.join(out, "thumbnail.jpg"), quality=94)
+
 # ------------------------------------------------------------------ main pipeline
 def load_script(topic):
     p = os.path.join(SCRIPTS, slugify(topic) + ".json")
     if not os.path.exists(p): return None, p
     return json.load(open(p, encoding="utf-8")), p
 
-def make(topic, review_only=False, mark=True):
+def make(topic, review_only=False, mark=True, cover_only=False):
     import engine, audio
     script, sp = load_script(topic)
     if script is None:
@@ -319,6 +329,11 @@ def make(topic, review_only=False, mark=True):
     if not 35 <= total <= 55: log("AVISO: duración fuera de 35–55 s")
 
     prepare_objects(beats, accent, work)
+    if cover_only:
+        outs = sorted(d for d in os.listdir(OUTPUT) if d.endswith("_" + slug))
+        out = os.path.join(OUTPUT, outs[-1]) if outs else None
+        if out: write_cover(script, beats, accent, seed, out); log("portada ->", os.path.join(out, "thumbnail.jpg"))
+        return out
     sheets = review_sheets(beats, accent, seed, work)
     if prepare_icons(work): sheets = review_sheets(beats, accent, seed, work)
     log("hojas de revisión:", *sheets)
@@ -339,12 +354,7 @@ def make(topic, review_only=False, mark=True):
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", video, "-i", wav, "-map", "0:v", "-map", "1:a", "-c:v", "copy",
                     "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-c:a", "aac", "-b:a", "256k", "-ar", "48000",
                     "-t", f"{total:.3f}", "-movflags", "+faststart", mp4], check=True)
-    from PIL import Image
-    cv_ = script.get("cover", {}); cb = beats[cv_.get("beat", next((b["index"] for b in beats if b["objects"]), 0))]
-    obj = engine.obj_frame(cb["objects"][0]["dir"], cb["frames"] // 2) if cb["objects"] else None
-    first = script["beats"][0]["data"].get("shots", [{}])[0]
-    Image.fromarray(engine.cover(cb, obj, engine.Background(accent, seed), accent, cv_.get("big", first.get("big", script["title"])),
-                                 cv_.get("small", first.get("small")))).save(os.path.join(out, "thumbnail.jpg"), quality=94)
+    write_cover(script, beats, accent, seed, out)
     write_meta(script, beats, out, total, music_src, cat)
     json.dump(script, open(os.path.join(out, "script.json"), "w", encoding="utf-8"), indent=2, ensure_ascii=False)
     info = probe(mp4); size = int(info["format"]["size"]) / 1e6; dur = float(info["format"]["duration"])
@@ -360,12 +370,13 @@ def main():
     ap.add_argument("topic", nargs="?"); ap.add_argument("--batch", type=int, default=0)
     ap.add_argument("--review", action="store_true", help="solo voz + tiempos + hojas de fotogramas")
     ap.add_argument("--no-mark", action="store_true", help="no marcar el tema como done")
+    ap.add_argument("--cover-only", action="store_true", help="solo regenerar thumbnail.jpg de un Short ya hecho")
     a = ap.parse_args()
     topics = [a.topic] if a.topic else next_todos(max(1, a.batch))
     if not topics: log("No quedan temas 'todo' en topics.csv -> pide a Claude que añada 20 nuevos."); sys.exit(1)
     missing, made = [], []
     for t in topics:
-        r = make(t, review_only=a.review, mark=not (a.no_mark or a.review))
+        r = make(t, review_only=a.review, mark=not (a.no_mark or a.review or a.cover_only), cover_only=a.cover_only)
         (made if r else missing).append(t)
     log(f"hechos: {len(made)}  sin guion: {len(missing)}")
     for t in missing: log("  falta guion:", t)

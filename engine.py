@@ -470,9 +470,80 @@ def t_reveal(arr, t, d, ctx):
         a, b, dy = enter(t, 0, .7, 12, 8); label(arr, d["small"], CX, d.get("y", 760) - 190 + dy, G4, a, 30, blur=b)
     headline(arr, t, ctx, d["text"], d.get("y", 760), d.get("size", 190), sync=True)
 
+def t_cell(arr, t, d, ctx):
+    """Inside a lithium-ion cell: ions shuttle graphite <-> cathode; mode 'trap' grows the SEI crust that keeps some."""
+    a, _, dy = enter(t, 0, .7, 30, 0)
+    if a <= 0: return
+    x0, y0, x1, y1 = 90, 400 + dy, 910, 1110 + dy; glass(arr, (x0, y0, x1, y1), 44, a)
+    ax0, ax1, cx0, cx1 = x0 + 60, x0 + 300, x1 - 300, x1 - 60; top, bot = int(y0 + 150), int(y1 - 70)
+    label(arr, "Graphite", (ax0 + ax1) / 2, y0 + 80, G4, a, 24); label(arr, "Cathode", (cx0 + cx1) / 2, y0 + 80, G4, a, 24)
+    base = (30, 30, 30); line = mixc(base, (70, 70, 68), a)
+    for y in range(top, bot + 1, 30): cv2.line(arr, (ax0, y), (ax1, y), line, 3, cv2.LINE_AA)       # graphite sheets
+    for y in range(top + 8, bot - 8, 38):                                                               # layered oxide lattice
+        for x in range(cx0 + 10, cx1 - 10, 38): cv2.rectangle(arr, (x, y), (x + 16, y + 16), line, -1, cv2.LINE_AA)
+    _dashed(arr, (CX, top - 10), (CX, bot + 10), G3, a * .8, 8, 10, 2)
+    trap = d.get("mode") == "trap"; tc = ctx.at(d.get("crust_at"), .08); g = expo((t - tc) / 2.2) if trap else 0.0
+    cw = 46 * g
+    if cw > 1:                                                                                          # SEI crust, rough edge
+        ys = np.arange(top - 6, bot + 7, 6); xs = ax1 + 4 + cw * (.62 + .38 * np.sin(ys * .37) * np.cos(ys * .11))
+        pts = np.concatenate([np.stack([xs, ys], 1), [[ax1 + 2, bot + 6], [ax1 + 2, top - 6]]]).astype(np.int32)
+        cv2.fillPoly(arr, [pts], mixc(base, (112, 108, 96), a), cv2.LINE_AA)
+        la, lb, ldy = enter(t, tc + .5, .7, 10, 8)
+        label(arr, "SEI layer", ax1 + 26, bot + 46 + ldy, G4, la, 22, "l", lb)
+    N = d.get("ions", 12); period = d.get("period", 2.6); trapped = 0
+    for i in range(N):
+        y = top + (i + .5) * (bot - top) / N + 6 * math.sin(i * 2.3)
+        xa = ax0 + 30 + (i * 53) % (ax1 - ax0 - 60); xc = cx0 + 30 + (i * 71) % (cx1 - cx0 - 60)
+        ph = (t / period + i * .37) % 1.0; k = smooth(min(1, ph * 2) if ph < .5 else max(0, 2 - ph * 2))
+        x = xa + (xc - xa) * k; col, gl = ctx.accent, .6
+        if trap and i % 3 == 1:
+            tt = tc + .5 + trapped * .35; trapped += 1
+            if t >= tt:
+                x = ax1 + 4 + cw * .5; col, gl = G4, 0.0
+                y = y
+        dot(arr, x, y, 7, col, a, glow=gl)
+    if trap and d.get("cycles"):
+        n = int(1 + (d["cycles"] - 1) * expo((t - tc) / 2.6)); ca = enter(t, tc, .6)[0]
+        nw = tw("0", "Medium", 36) * len(f"{d['cycles']:,}")
+        text_tnum(arr, f"{n:,}", x1 - 56, y1 - 40, "Medium", 36, INK, ca * a, "r")
+        label(arr, "Cycle", x1 - 56 - nw - 18, y1 - 40, G3, ca * a, 20, "r")
+
+WALLS = {"drywall": (.85, "Drywall", "≈ −4 dB"), "brick": (.45, "Brick", "≈ −10 dB"),
+         "concrete": (.2, "Concrete", "≈ −23 dB"), "metal": (0.0, "Metal", "Reflects")}
+def t_wall(arr, t, d, ctx):
+    """Wi-Fi wavefronts meeting a wall: drywall lets them through, concrete soaks them up, metal mirrors them back."""
+    T, name, val = WALLS[d.get("material", "drywall")]; metal = d.get("material") == "metal"
+    src, rcv = (175, 780), (835, 780); wx0, wx1 = (515, 545) if metal else (492, 568)
+    a, b, dy = enter(t, 0, .7, 20, 8)
+    Y0, Y1 = 400, 1170; M = np.zeros((Y1 - Y0, W), np.float32)
+    for k in range(9):
+        r = (t * 240 + k * 95) % 860
+        if r < 30: continue
+        f = (1 - r / 860) ** 1.2 * smooth(r / 120)
+        cv2.ellipse(M, (src[0], src[1] - Y0), (int(r), int(r)), 0, -48, 48, f, 3, cv2.LINE_AA)
+        if metal and r > wx0 - src[0]:                                            # mirror image source
+            cv2.ellipse(M, (2 * wx0 - src[0], src[1] - Y0), (int(r), int(r)), 0, 132, 228, f * .85, 3, cv2.LINE_AA)
+    M[:, wx1:] *= T; M[:, wx0:wx1] = 0
+    if metal: M[:, wx0:] = 0
+    comp(arr, M, 0, Y0, ctx.accent, a)
+    hgt = 720; wy0 = 420
+    if name == "Drywall": glass(arr, (wx0, wy0, wx1, wy0 + hgt), 10, a, tint=.09, border=.22)
+    else:
+        colr = {"Brick": (74, 66, 60), "Concrete": (62, 62, 60), "Metal": (160, 160, 156)}[name]
+        comp(arr, rr_mask(wx1 - wx0, hgt, 8), wx0, wy0, colr, a)
+        if metal: comp(arr, rr_mask(6, hgt - 20, 3), wx0 + 6, wy0 + 10, (230, 230, 226), a * .8)
+        else:
+            rng = np.random.default_rng(7)
+            for _ in range(70): dot(arr, rng.uniform(wx0 + 8, wx1 - 8), rng.uniform(wy0 + 10, wy0 + hgt - 10), rng.uniform(1.5, 3.5), (46, 46, 44), a)
+    label(arr, name, (wx0 + wx1) / 2, 380 + dy, G4, a, 26, blur=b)
+    text(arr, val, (wx0 + wx1) / 2, 1200 + dy, "Medium", 36, ctx.accent if metal else INK, a, "m", "c", -.01, b)
+    icon(arr, "router", src[0], src[1], 96, INK, a)
+    icon(arr, "smartphone", rcv[0], rcv[1] + 20, 96, G4, a)
+    icon(arr, "wifi", rcv[0], rcv[1] - 90, 64, ctx.accent if T > .5 else G3, a * (.25 + .75 * T))
+
 TEMPLATES = {"hook": t_hook, "number": t_number, "big_number": t_number, "versus": t_versus, "globe": t_globe,
              "signal": t_signal, "flow": t_flow, "diagram": t_flow, "rings": t_rings, "list": t_list,
-             "insight": t_insight, "didyouknow": t_insight, "chart": t_chart, "reveal": t_reveal}
+             "insight": t_insight, "didyouknow": t_insight, "chart": t_chart, "reveal": t_reveal, "cell": t_cell, "wall": t_wall}
 NO_CAPTIONS = {"hook", "reveal"}            # these already show the spoken words as the headline
 
 def _ats(d, key, n): a = d.get(key) or []; return [a[i] if i < len(a) else None for i in range(n)]
@@ -489,6 +560,8 @@ EVENTS = {
     "insight": lambda d, c: [(.25, "tick")],
     "chart": lambda d, c: [(c.at(x, .1 + i * .7 / len(d["bars"])), "tick") for i, x in enumerate(_ats(d, "at", len(d["bars"])))],
     "reveal": lambda d, c: [(0.0, "chime")],
+    "cell": lambda d, c: [(.05, "tick")] + ([(c.at(d.get("crust_at"), .08) + .5, "tick")] if d.get("mode") == "trap" else []),
+    "wall": lambda d, c: [(.05, "tick")],
 }
 for a, b in (("big_number", "number"), ("diagram", "flow"), ("didyouknow", "insight")): EVENTS[a] = EVENTS[b]
 
@@ -629,9 +702,10 @@ def cover(beat, obj_rgba, bg, accent, big, small=None):
     if obj_rgba is not None:
         h, w = obj_rgba.shape[:2]; s = min(1.0, 900 / max(h, w)) * .95
         layer(arr, cv2.resize(obj_rgba, (int(w * s), int(h * s)), interpolation=cv2.INTER_AREA), CX, 1180)
-    ctx = Ctx(acc, 1.0, [], 0, 0)
-    if small: label(arr, small, CX, 430, G4, 1, 32)
-    headline(arr, 99.0, ctx, big, 590, 170)
+    ctx = Ctx(acc, 1.0, [], 0, 0); y = 620
+    size = headline(arr, 99.0, ctx, big, y, 170)
+    top = y - (len(_lines(big)) - 1) * size * 1.08 / 2            # centre of the first headline line
+    if small: label(arr, small, CX, top - size * CAP / 2 - 64, G4, 1, 32)
     logo(arr, acc)
     return bg.finish(arr, 0)
 

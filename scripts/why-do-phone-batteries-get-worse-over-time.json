@@ -1,0 +1,188 @@
+{
+  "topic": "Why do phone batteries get worse over time?",
+  "category": "energy",
+  "title": "The Real Reason Your Battery Gets Worse 🔋",
+  "description": [
+    "Your battery isn't just 'old': lithium gets trapped in a growing SEI layer on the graphite and never comes back.",
+    "Heat and sitting at 100% speed it up. Apple rates ~80% capacity after 500 cycles (1,000 on iPhone 15)."
+  ],
+  "sources": [
+    "Apple – Maximizing Battery Life and Lifespan (above 35 °C can permanently damage capacity): https://www.apple.com/batteries/maximizing-performance/",
+    "AppleInsider – iPhone 15 battery rated for 1,000 cycles; iPhone 14 and earlier, 500: https://appleinsider.com/articles/24/02/20/apple-says-the-iphone-15-battery-is-more-durable-than-it-originally-thought",
+    "Battery Design – SEI growth (irreversible lithium loss, faster at high temperature and high state of charge): https://www.batterydesign.net/chemistry/solid-electrolyte-interphase/sei-growth/",
+    "Ionworks – Batteries 101: degradation (loss of lithium inventory, heat, high SOC): https://docs.ionworks.com/guide/batteries-101/degradation"
+  ],
+  "tags": [
+    "battery",
+    "battery health",
+    "lithium-ion",
+    "iPhone battery",
+    "battery degradation",
+    "how batteries work",
+    "quiet circuit",
+    "science",
+    "tech",
+    "shorts"
+  ],
+  "voice": "am_fenrir",
+  "speed": 1.05,
+  "cover": {
+    "small": "Why batteries age",
+    "big": "Quietly|*eating itself*"
+  },
+  "beats": [
+    {
+      "narration": "Your phone battery is quietly *eating itself*.",
+      "visual_type": "hook",
+      "data": {
+        "shots": [
+          {
+            "small": "Your phone battery",
+            "big": "is quietly"
+          },
+          {
+            "at": "eating",
+            "big": "*eating itself*."
+          }
+        ],
+        "objects": [
+          {
+            "type": "battery",
+            "cx": 500,
+            "cy": 1080,
+            "w": 520,
+            "h": 760,
+            "dist": 4.3
+          }
+        ]
+      }
+    },
+    {
+      "narration": "Charging pushes lithium ions into the graphite. Using the phone sends them back.",
+      "visual_type": "cell",
+      "data": {
+        "mode": "shuttle",
+        "ions": 12
+      }
+    },
+    {
+      "narration": "But over time, some ions get stuck in a crust that keeps growing on the graphite.",
+      "visual_type": "cell",
+      "data": {
+        "mode": "trap",
+        "ions": 12,
+        "crust_at": "stuck",
+        "cycles": 500
+      }
+    },
+    {
+      "narration": "That crust is called the SEI layer, and it *never* gives them back.",
+      "visual_type": "insight",
+      "data": {
+        "kicker": "No refunds",
+        "icon": "layers",
+        "text": "Trapped *for good*",
+        "small": "SEI layer",
+        "small_at": "SEI"
+      }
+    },
+    {
+      "narration": "Fewer free ions means less energy.",
+      "visual_type": "flow",
+      "data": {
+        "nodes": [
+          {
+            "text": "Lithium trapped",
+            "icon": "layers"
+          },
+          {
+            "text": "Fewer free ions",
+            "icon": "zap"
+          },
+          {
+            "text": "= less energy",
+            "icon": "battery-low"
+          }
+        ],
+        "at": [
+          0.0,
+          "free",
+          "energy"
+        ]
+      }
+    },
+    {
+      "narration": "After 500 full cycles, older iPhones keep about *80%*.",
+      "visual_type": "number",
+      "data": {
+        "value": 80,
+        "unit": "%",
+        "label": "after 500 cycles",
+        "icon": "battery-medium",
+        "at": 0.03,
+        "dur": 1.4
+      }
+    },
+    {
+      "narration": "Apple now rates the iPhone 15 for *1,000* cycles.",
+      "visual_type": "versus",
+      "data": {
+        "a": {
+          "label": "iPhone 14 and older",
+          "value": "500 cycles",
+          "icon": "battery-medium"
+        },
+        "b": {
+          "label": "iPhone 15",
+          "value": "1,000 cycles",
+          "icon": "battery-full"
+        },
+        "a_at": 0.0,
+        "b_at": "iPhone"
+      }
+    },
+    {
+      "narration": "Two things make the crust grow faster: heat, and sitting at 100% for hours.",
+      "visual_type": "list",
+      "data": {
+        "title": "What speeds it up",
+        "items": [
+          {
+            "n": "01",
+            "text": "Heat"
+          },
+          {
+            "n": "02",
+            "text": "Sitting at 100%"
+          }
+        ],
+        "at": [
+          "heat",
+          "sitting"
+        ],
+        "icon": "thermometer-sun",
+        "icon_at": "heat"
+      }
+    },
+    {
+      "narration": "Apple warns that above *35 degrees* Celsius, the damage can be permanent.",
+      "visual_type": "number",
+      "data": {
+        "value": 35,
+        "unit": "°C",
+        "label": "Permanent damage zone",
+        "icon": "thermometer",
+        "at": 0.03,
+        "dur": 1.0
+      }
+    },
+    {
+      "narration": "So even *right now*,",
+      "visual_type": "reveal",
+      "data": {
+        "text": "Even *right now*…",
+        "size": 180
+      }
+    }
+  ]
+}

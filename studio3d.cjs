@@ -170,7 +170,50 @@ function chip(job) {
   update = T => { g.rotation.y = (job.rot0 ?? 0.4) + T * (job.speed ?? 0.2); };
 }
 
-const BUILD = { globe, satellite, phone, chip };
+// ---------------------------------------------------------------- battery (phone pouch cell)
+function battery(job) {
+  const g = new THREE.Group(); S.add(g);
+  const foil = new THREE.MeshPhysicalMaterial({ color: 0xb8b8b4, metalness: 1, roughness: 0.32, clearcoat: 0.5, clearcoatRoughness: 0.3 });
+  const tab = new THREE.MeshStandardMaterial({ color: 0xd9d9d5, metalness: 1, roughness: 0.22 });
+  const label = canvasTex(512, 768, (x, w, h) => {
+    x.fillStyle = '#121214'; x.fillRect(0, 0, w, h);
+    x.fillStyle = job.accent; x.fillRect(0, h * 0.06, w, 6);
+    x.fillStyle = '#8a8a86'; x.font = '500 34px sans-serif'; x.textAlign = 'center';
+    x.fillText('Li-ion', w / 2, h * 0.52); x.font = '400 24px sans-serif'; x.fillText('3.85 V', w / 2, h * 0.6);
+  });
+  const body = new THREE.Mesh(new RoundedBoxGeometry(1.0, 1.5, 0.12, 6, 0.06), foil); g.add(body);
+  const lab = new THREE.Mesh(new THREE.PlaneGeometry(0.84, 1.26), new THREE.MeshPhysicalMaterial({ map: label, roughness: 0.45, clearcoat: 0.3 }));
+  lab.position.z = 0.0615; lab.position.y = -0.04; g.add(lab);
+  const seal = new THREE.Mesh(new RoundedBoxGeometry(1.0, 0.12, 0.05, 3, 0.02), foil); seal.position.y = 0.8; g.add(seal);
+  for (const sx of [-0.22, 0.22]) {
+    const t = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.2, 0.012), tab); t.position.set(sx, 0.92, 0); g.add(t);
+  }
+  C.position.set(0, 0.1, job.dist ?? 4.6); C.lookAt(0, 0, 0);
+  update = T => { g.rotation.y = (job.rot0 ?? -0.45) + (job.swing ?? 0.4) * Math.sin(T * (job.speed ?? 0.35)); g.rotation.x = -0.12; g.rotation.z = 0.05; g.position.y = 0.025 * Math.sin(T * 0.8); };
+}
+
+// ---------------------------------------------------------------- router (mesh-Wi-Fi dome with a light ring)
+function router(job) {
+  const g = new THREE.Group(); S.add(g);
+  const shell = new THREE.MeshPhysicalMaterial({ color: 0xecece8, metalness: 0, roughness: 0.62, clearcoat: 0.15, clearcoatRoughness: 0.6, sheen: 0.3 });
+  const base = new THREE.MeshStandardMaterial({ color: 0x1b1b1d, metalness: 0.2, roughness: 0.5 });
+  const prof = [new THREE.Vector2(0, 0)], R = 0.62, Hh = 0.78;
+  for (let i = 0; i <= 40; i++) {                      // softly tapered wall rolling into a dome
+    const u = i / 40, y = u * Hh, r = R - 0.06 * u * u;
+    prof.push(new THREE.Vector2(r, y));
+  }
+  for (let i = 1; i <= 40; i++) { const a = i / 40 * Math.PI / 2; prof.push(new THREE.Vector2((R - 0.06) * Math.cos(a), Hh + 0.32 * Math.sin(a))); }
+  const body = new THREE.Mesh(new THREE.LatheGeometry(prof, 128), shell); body.position.y = -0.5; g.add(body);
+  const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.58, 0.58, 0.05, 96), base); foot.position.y = -0.52; g.add(foot);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.012, 12, 160), new THREE.MeshBasicMaterial({ color: col(job.accent) }));
+  ring.rotation.x = Math.PI / 2; ring.position.y = -0.465; g.add(ring);
+  const glowR = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.05, 12, 160), new THREE.MeshBasicMaterial({ color: col(job.accent), transparent: true, opacity: 0.18, depthWrite: false }));
+  glowR.rotation.x = Math.PI / 2; glowR.position.y = -0.465; g.add(glowR);
+  C.position.set(0, 0.55, job.dist ?? 4.6); C.lookAt(0, -0.05, 0);
+  update = T => { g.rotation.y = (job.rot0 ?? 0) + T * (job.speed ?? 0.15); glowR.material.opacity = 0.12 + 0.1 * (0.5 + 0.5 * Math.sin(T * 2.2)); };
+}
+
+const BUILD = { globe, satellite, phone, chip, battery, router };
 window.setupJob = async job => { base(job); await BUILD[job.type](job); return true; };
 window.renderAt = T => { update(T); R.render(S, C); return R.domElement.toDataURL('image/png'); };
 window.rasterIcon = async (svg, size) => {

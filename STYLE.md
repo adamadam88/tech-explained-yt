@@ -43,7 +43,7 @@ Si el guion no indica categoría, `engine.guess_category()` la deduce del tema. 
 - Sombras suaves bajo el texto sobre imagen. **Viñeta sutil** y **grano de película muy ligero** en todo el fotograma.
 
 ## 5. 3D
-- Objetos protagonistas con **Three.js** (`studio3d.cjs`, Chromium sin pantalla): `globe` (globo de puntos con costas reales de Natural Earth + órbitas), `satellite`, `phone`, `chip`.
+- Objetos protagonistas con **Three.js** (`studio3d.cjs`, Chromium sin pantalla): `globe` (globo de puntos con costas reales de Natural Earth + órbitas), `satellite`, `phone`, `chip`, `battery` (celda pouch de aluminio), `router` (cúpula de malla con anillo de luz).
 - Iluminación de estudio (RoomEnvironment + key light + rim light del color de acento), tone mapping ACES, giro lento y continuo entre cortes.
 - Materiales sobrios: metal, cristal oscuro. Nada de colores saturados en superficies grandes.
 - Para añadir un objeto: nueva función en `studio3d.cjs` y registrarla en `BUILD`.
