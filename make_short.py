@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tech, Explained — one-command YouTube Shorts pipeline.
+"""Quiet Circuit (@quietcircuit) — one-command YouTube Shorts pipeline.
 
   python make_short.py "How does GPS know where you are?"   # that topic (needs scripts/<slug>.json)
   python make_short.py                                       # next `todo` topic in topics.csv
@@ -166,7 +166,7 @@ def build_timeline(script, voices, words, accent):
         for t, s in engine.EVENTS[b["visual_type"]](data, ctx):
             if 0 <= t < D: events.append((T + t, s))
         T += D
-    events.append((T - engine.OUTRO, "swish"))
+    events += [(T - engine.OUTRO, "swish"), (T - engine.OUTRO * .4, "chime")]   # brand close: node lights up
     events.sort(); dedup = []
     for t, s in events:
         if dedup and abs(dedup[-1][0] - t) < .09 and s not in ("rise", "chime"): continue

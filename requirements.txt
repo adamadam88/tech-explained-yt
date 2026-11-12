@@ -5,3 +5,5 @@ av<16  # PyAV 16+ breaks faster-whisper 1.2 audio decoding
 opencv-python-headless
 pillow
 numpy
+uharfbuzz
+fonttools

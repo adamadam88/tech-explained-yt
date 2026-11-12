@@ -1,6 +1,6 @@
-# STYLE.md — Sistema de diseño "Tech, Explained" (obligatorio)
+# STYLE.md — Sistema de diseño de Quiet Circuit (@quietcircuit) (obligatorio)
 
-Referencia: keynotes de Apple y documentales minimalistas. **Premium, limpio, elegante.** Si algo parece "plantilla de YouTube", está mal.
+Quiet Circuit: la tecnología que nos rodea funciona en silencio; el canal la saca a la luz. Referencia: keynotes de Apple y documentales minimalistas. **Premium, limpio, elegante.** Si algo parece "plantilla de YouTube", está mal.
 Implementación: `engine.py` (2D, composición, movimiento), `studio3d.cjs` (3D + iconos), `audio.py` (sonido).
 
 ## 1. Color
@@ -35,7 +35,7 @@ Si el guion no indica categoría, `engine.guess_category()` la deduce del tema. 
 - Entradas: **fade + desenfoque que se enfoca + desplazamiento de ~30 px hacia arriba** (`engine.enter`), con escalonado de 60–70 ms entre palabras.
 - Cámara: push-in o pull-back lento y constante (3 %) con deriva lateral mínima; nunca un plano quieto.
 - Cortes limpios entre planos (cada 1–2 s pasa algo: corte, elemento que entra o cambio de plano dentro del beat).
-- **Cierre de marca idéntico en todos los vídeos**: últimos 0,5 s → desenfoque + fundido a `#0A0A0A` y una línea fina del color de acento que se abre en el centro. Después vuelve el gancho (bucle).
+- **Cierre de marca idéntico en todos los vídeos**: últimos 0,85 s → desenfoque + fundido a `#0A0A0A` y el símbolo de Quiet Circuit se dibuja y su nodo se enciende (ver sección 10). Después vuelve el gancho (bucle).
 
 ## 4. Profundidad
 - Capa de **bokeh desenfocado** que deriva despacio + resplandor suave del acento detrás del protagonista.
@@ -65,10 +65,16 @@ Nada importante en los 250 px de arriba, los 420 px de abajo ni los 140 px de la
 - Voz **calmada**: por defecto `af_heart` (la mejor valorada de Kokoro) a 1,05. Alternativas probadas: `af_bella`, `am_fenrir`, `am_puck`, `am_michael`, `bf_emma`. Varía la voz entre Shorts.
 - Mezcla a −14 LUFS con ducking de la música bajo la voz.
 
-## 10. Marca
-- Logotipo pequeño y discreto **"• TECH, EXPLAINED"** (21 px, tracking +24 %, gris, punto en acento) arriba a la izquierda, dentro de la zona segura.
-- Mismo cierre en todos los vídeos (sección 3).
-- **Portadas con un mismo esquema**: logo, etiqueta pequeña, titular de 2–4 palabras (palabra clave en acento) y el objeto 3D protagonista debajo (`engine.cover`, campo `cover` del guion).
+## 10. Marca (ver `branding/README.md`)
+- **Símbolo "Filament"**: una Q de circuito — anillo + una pista PCB (45° → horizontal) que acaba en un **nodo encendido**. Geometría única
+  compartida por `branding/brandkit.py` y `engine.py` (`MARK_*`). No deformar, no añadir efectos, no recolorear el anillo.
+- **Logotipo de texto**: "Quiet" Inter Display Light gris + "Circuit" SemiBold blanco. En tamaños pequeños: `QUIET CIRCUIT` Medium/SemiBold, tracking +24 %.
+- **Color de marca**: monocromo + **Filament `#FFE7B8`** solo en el nodo (perfil, banner, marca de agua). **En los vídeos, el nodo usa el acento de la categoría.**
+- **En cada Short**: logo de esquina discreto (símbolo de 34 px + `QUIET CIRCUIT` 21 px, gris) arriba a la izquierda, dentro de la zona segura.
+- **Cierre idéntico en todos los vídeos** (0,85 s, `engine.outro`): la escena se desenfoca y funde a `#0A0A0A`, el símbolo se dibuja solo
+  (anillo → pista), el nodo se enciende con un `chime` suave y aparece `QUIET CIRCUIT`. Luego el bucle vuelve al gancho.
+- **Portadas** con el mismo esquema: logo de esquina, etiqueta pequeña, titular de 2–4 palabras (palabra clave en acento) y el objeto 3D debajo.
+- Recursos del canal en `branding/`: perfil 800x800, banner 2560x1440 (contenido dentro de 1546x423), marca de agua 150x150.
 
 ## 11. Calidad
 1080x1920, **60 fps**, H.264 High (CRF 16, máx. 22 Mb/s), AAC 256 kb/s, **< 95 MB**.

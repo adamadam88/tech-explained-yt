@@ -1,4 +1,4 @@
-"""Premium vertical Shorts engine (1080x1920 @ 60 fps) for "Tech, Explained". Design rules: STYLE.md.
+"""Premium vertical Shorts engine (1080x1920 @ 60 fps) for Quiet Circuit (@quietcircuit). Design rules: STYLE.md.
 
 Monochrome base (#0A0A0A / #F5F5F2 / greys) + ONE accent per category, Inter Display with tight tracking,
 fade + blur-to-focus + small drift entrances with ease-out-expo (no bounce, no shake), frosted-glass panels,
@@ -544,22 +544,59 @@ def camera(arr, t, D, idx):
     M = np.float32([[z, 0, (1 - z) * CX + dx], [0, z, (1 - z) * 800 + dy]])
     return cv2.warpAffine(arr, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
 
-def logo(arr, accent, alpha=1.0):
-    dot(arr, 69, 300, 4.5, accent, .95 * alpha)
-    text(arr, "TECH, EXPLAINED", 84, 300, "SemiBold", 21, G4, .85 * alpha, "l", "c", .24)
+# ---------------------------------------------------------------- brand: Quiet Circuit mark (geometry = branding/brandkit.py mark_B)
+MARK_RING, MARK_R = (44, 46), 29                 # 100-unit box
+MARK_TAIL = [(44 + 29 * math.cos(math.pi / 4), 46 + 29 * math.sin(math.pi / 4)), (72, 74), (83, 74)]
+MARK_PAD, MARK_PAD_R = (89, 74), 6.2
 
-OUTRO = .5
+def mark_mask(size, ring=1.0, tail=1.0, sw=8.6, ss=4):
+    """Ring + trace of the mark (ink part) as a float mask, size x size px; ring/tail = draw-on progress 0..1."""
+    S = int(size * ss); k = S / 100; m = np.zeros((S, S), np.uint8); th = max(1, int(round(sw * k)))
+    if ring > 0:   # starts and ends where the trace leaves the ring (45°), drawn clockwise
+        cv2.ellipse(m, (int(MARK_RING[0] * k), int(MARK_RING[1] * k)), (int(MARK_R * k),) * 2, 0, 45, 45 + 360 * min(ring, 1), 255, th, cv2.LINE_AA)
+    if tail > 0:
+        segs = list(zip(MARK_TAIL[:-1], MARK_TAIL[1:])); L = sum(math.dist(p, q) for p, q in segs); left = L * min(tail, 1)
+        for p, q in segs:
+            if left <= 0: break
+            l = math.dist(p, q); f = min(1, left / l); left -= l
+            e = (p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f)
+            cv2.line(m, (int(p[0] * k), int(p[1] * k)), (int(e[0] * k), int(e[1] * k)), 255, th, cv2.LINE_AA)
+    return cv2.resize(m, (int(size), int(size)), interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
+
+@lru_cache(8)
+def _mark_static(size): return mark_mask(size)
+
+def draw_mark(arr, x, y, size, accent, alpha=1.0, ring=1.0, tail=1.0, pad=1.0, glow=.8, ink=INK):
+    """Mark with its box top-left at (x, y). The pad (the 'light') takes the video's category accent."""
+    m = _mark_static(int(size)) if ring >= 1 and tail >= 1 else mark_mask(size, ring, tail)
+    comp(arr, m, x, y, ink, alpha)
+    if pad > 0:
+        s = size / 100; dot(arr, x + MARK_PAD[0] * s, y + MARK_PAD[1] * s, MARK_PAD_R * s, accent, alpha * pad, glow=glow * pad)
+
+def logo(arr, accent, alpha=1.0):
+    """Corner brand: small mark + QUIET CIRCUIT (discreet, inside the safe zone)."""
+    if alpha <= 0.004: return
+    draw_mark(arr, 52, 283, 34, accent, .92 * alpha, glow=.5)
+    text(arr, "QUIET CIRCUIT", 96, 300, "SemiBold", 21, G4, .85 * alpha, "l", "c", .24)
+
+OUTRO = .85
+def outro_k(t, D): return clamp((t - (D - OUTRO)) / OUTRO)
+
 def outro(arr, t, D, accent):
-    """Signature close used on every Short: blur + fade to black, accent hairline opens at centre."""
-    k = clamp((t - (D - OUTRO)) / OUTRO)
+    """Signature close on every Short: the scene blurs into #0A0A0A, then the Quiet Circuit mark draws itself
+    (ring -> trace) and its node lights up in the category accent, with the wordmark underneath."""
+    k = outro_k(t, D)
     if k <= 0: return arr
-    e = smooth(k)
+    e = smooth(k / .42)
     small = cv2.resize(arr, (W // 4, H // 4), interpolation=cv2.INTER_AREA)
     bl = cv2.resize(cv2.GaussianBlur(small, (0, 0), 1 + 5 * e), (W, H), interpolation=cv2.INTER_LINEAR)
     out = cv2.addWeighted(arr, 1 - e, bl, e, 0)
-    out = cv2.addWeighted(out, 1 - e, np.full_like(out, BG), e, 0)
-    hw = 130 * expo(k * 1.4); la = smooth(k * 3) * (1 - smooth((k - .75) / .25))
-    if hw > 1: comp(out, np.ones((2, int(hw * 2)), np.float32), CX - hw, 959, accent, la)
+    out = np.ascontiguousarray(cv2.addWeighted(out, 1 - e, np.full_like(out, BG), e, 0))
+    size = 220; x, y = CX - size * .52, 870 - size / 2
+    ring = expo((k - .12) / .42); tail = smooth((k - .5) / .14); pad = smooth((k - .6) / .12)
+    if ring > 0: draw_mark(out, x, y, size, accent, smooth((k - .1) / .1), ring, tail, pad, glow=.9)
+    a, b, dy = enter(k * OUTRO, .62 * OUTRO, .5, 12, 8)
+    text(out, "QUIET CIRCUIT", CX, 1080 + dy, "Medium", 30, G4, a, "m", "c", .3, b)
     return out
 
 def render_frame(beat, t, bg, accent, captions=True, cam=True, finish=True, fi=0):
@@ -578,14 +615,15 @@ def render_frame(beat, t, bg, accent, captions=True, cam=True, finish=True, fi=0
     if cam: arr = camera(arr, t, beat["D"], beat["index"])
     if captions and beat["visual_type"] not in NO_CAPTIONS and not d.get("no_captions"):
         draw_captions(arr, t, beat["chunks"], acc, beat["D"])
-    if beat.get("outro"): arr = outro(arr, t, beat["D"], acc)
+    k = outro_k(t, beat["D"]) if beat.get("outro") else 0.0
+    if k > 0: arr = outro(arr, t, beat["D"], acc)
     if finish:
-        logo(arr, acc)
+        logo(arr, acc, 1 - smooth(k / .35))
         arr = bg.finish(arr, fi)
     return arr
 
 def cover(beat, obj_rgba, bg, accent, big, small=None):
-    """Thumbnail: same layout for every Short — hero object, small label, 2–4 word headline, logo."""
+    """Thumbnail: same layout for every Short — hero object, small label, 2–4 word headline, brand logo."""
     acc = hexrgb(accent)
     arr = bg.frame(0.0, (CX, 1060), 1.4)
     if obj_rgba is not None:

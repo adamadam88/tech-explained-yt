@@ -3,7 +3,7 @@
 **Topic:** How does GPS know where you are?  
 **Category:** space  
 **Voice:** af_heart @ 1.05  
-**Music:** synth  **Length:** 38.2s
+**Music:** synth  **Length:** 38.6s
 
 | # | t | visual | narration |
 |---|---|---|---|
