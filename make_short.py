@@ -278,7 +278,7 @@ def write_meta(script, beats, out, total, music_src, cat):
     desc = script["description"][:2]
     src = "\n".join(f"- {s}" for s in script["sources"])
     tags = script.get("tags", [])
-    hashtags = " ".join("#" + re.sub(r"\W", "", t) for t in tags[:3])
+    hashtags = " ".join(list(dict.fromkeys("#" + re.sub(r"\W", "", t).lower() for t in tags if t.lower() != "shorts"))[:3])
     open(os.path.join(out, "description.txt"), "w").write("\n".join(desc) + f"\n\nSources:\n{src}\n\n{hashtags} #shorts\n")
     open(os.path.join(out, "tags.txt"), "w").write(", ".join(tags) + "\n")
     md = [f"# {script['title']}", "", f"**Topic:** {script['topic']}  ", f"**Category:** {cat}  ",
